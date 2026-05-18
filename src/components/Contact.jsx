@@ -39,7 +39,13 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
+    
+    const formData = new FormData(e.target);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const message = formData.get("message");
+
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
       setStatus('error');
       setTimeout(() => setStatus(null), 5000);
       return;
@@ -48,16 +54,17 @@ const Contact = () => {
     setLoading(true);
     setStatus(null);
     try {
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("email", form.email);
-      formData.append("message", form.message);
-      formData.append("_subject", `Portfolio Contact from ${form.name}`);
+      const apiFormData = new FormData();
+      apiFormData.append("access_key", "b31f5477-33da-4f53-b479-388f0923be95");
+      apiFormData.append("name", name.trim());
+      apiFormData.append("email", email.trim());
+      apiFormData.append("message", message.trim());
+      apiFormData.append("subject", `Portfolio Contact from ${name.trim()}`);
 
-      // Silent background submission to your Formspree ID
-      const response = await fetch("https://formspree.io/f/xoqgyjzo", {
+      // Submission to Web3Forms
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: formData,
+        body: apiFormData,
         headers: {
           'Accept': 'application/json'
         }
