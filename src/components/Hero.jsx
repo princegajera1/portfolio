@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { ArrowRight, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import avatarImg from '../pages/img.jpg';
 import resumeImg from '../pages/resume.jpg';
 
@@ -37,126 +38,129 @@ const AnimatedCounter = ({ value, duration = 2000 }) => {
 };
 
 const Hero = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
+  const container = useRef();
+  const imageRef = useRef();
+  
+  useGSAP(() => {
+    const tl = gsap.timeline();
+    
+    // Text animations
+    tl.fromTo('.hero-text-item', 
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power3.out' }
+    );
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    },
-  };
+    // Image GSAP animations (complex, professional, not AI-looking)
+    gsap.fromTo(imageRef.current, 
+      { scale: 0.8, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.2, ease: 'elastic.out(1, 0.7)', delay: 0.2 }
+    );
+
+    gsap.to(imageRef.current, {
+      y: -15,
+      duration: 2.5,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      delay: 1.4
+    });
+
+  }, { scope: container });
 
   return (
-    <section id="hero" className="min-h-[85vh] flex items-center pt-24 pb-8 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col lg:flex-row items-center justify-between gap-12">
+    <section id="hero" ref={container} className="min-h-[90vh] flex items-center pt-24 pb-12 relative overflow-hidden bg-custom-richBlack">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col lg:flex-row items-center justify-between gap-16">
         {/* Left Side - Text Content */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="w-full lg:w-1/2 flex flex-col justify-center"
-        >
+        <div className="w-full lg:w-1/2 flex flex-col justify-center">
           {/* Badge */}
-          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-indigo/10 border border-accent-indigo/20 w-fit mb-6 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-            <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"></span>
-            <span className="text-xs font-mono text-accent-cyan tracking-wider uppercase font-semibold">Available for new opportunities</span>
-          </motion.div>
+          <div className="hero-text-item inline-flex items-center gap-3 px-4 py-2 rounded-full bg-custom-midnightGreen/20 border border-custom-midnightGreen/40 w-fit mb-8 shadow-sm opacity-0">
+            <span className="w-2.5 h-2.5 rounded-full bg-custom-gargoyleGas animate-pulse"></span>
+            <span className="text-xs font-mono text-custom-gargoyleGas tracking-widest uppercase font-semibold">Available for work</span>
+          </div>
 
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-heading font-extrabold tracking-tight mb-4 text-white leading-none">
+          <h1 className="hero-text-item text-4xl md:text-6xl font-heading font-extrabold tracking-tight mb-4 text-white leading-tight opacity-0">
             Hello, World!<br />
-            I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan via-accent-indigo to-accent-purple drop-shadow-sm">Gajera Prince</span>
-          </motion.h1>
+            I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-custom-carrotOrange via-custom-gargoyleGas to-custom-carrotOrange">Gajera Prince</span>
+          </h1>
 
-          <motion.div variants={itemVariants} className="text-2xl md:text-3xl font-heading font-semibold text-gray-300 mb-4 flex items-center gap-2">
-            <span>I am a</span>
+          <div className="hero-text-item text-xl md:text-2xl font-heading font-semibold text-gray-300 mb-4 flex items-center gap-2 opacity-0">
+            <span className="text-gray-400">I am a</span>
             <TypeAnimation
               sequence={[
-                'Full Stack Developer',
-                2000,
-                'Generative AI Explorer',
-                2000,
-                'Problem Solver',
-                2000,
+                'Full Stack Developer', 2000,
+                'Generative AI Explorer', 2000,
+                'Problem Solver', 2000,
               ]}
               wrapper="span"
               speed={50}
               repeat={Infinity}
-              className="text-white font-mono border-r-2 border-white pr-1 animate-pulse"
-            />
-          </motion.div>
-
-          <motion.p variants={itemVariants} className="text-gray-400 text-lg md:text-xl mb-6 max-w-xl leading-relaxed font-sans">
-            I build exceptional and accessible digital experiences for the web. 
-            Currently focused on building accessible, human-centered products and exploring the world of Generative AI.
-          </motion.p>
-
-          <motion.div variants={itemVariants} className="flex flex-wrap gap-4 mb-8">
-            <Link to="/projects" className="relative px-8 py-4 rounded-full bg-gradient-to-r from-accent-cyan to-accent-indigo text-white font-medium shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] transition-all duration-300 flex items-center gap-2 group overflow-hidden">
-              <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></span>
-              <span className="relative z-10">View My Work</span>
-            </Link>
-            <a href={resumeImg} target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-full bg-white text-dark font-bold hover:bg-gray-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-              My Resume
-            </a>
-          </motion.div>
-
-          {/* Stats with count-up animations */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-2xl border-t border-white/10 pt-6">
-            <div>
-              <p className="text-4xl font-bold text-white mb-1 drop-shadow-md">
-                <AnimatedCounter value="17+" />
-              </p>
-              <p className="text-sm text-gray-400 font-mono tracking-wide">Projects</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-white mb-1 drop-shadow-md">
-                <AnimatedCounter value="2" />
-              </p>
-              <p className="text-sm text-gray-400 font-mono tracking-wide">Internships</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-white mb-1 drop-shadow-md">B.E.</p>
-              <p className="text-sm text-gray-400 font-mono tracking-wide">Computer Eng.</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-white mb-1 drop-shadow-md">2027</p>
-              <p className="text-sm text-gray-400 font-mono tracking-wide">Batch</p>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Right Side - Responsive Symmetrical and Beautiful Chibi Avatar */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex w-full lg:w-1/2 justify-center items-center relative h-[320px] md:h-[400px] lg:h-[500px] mt-6 lg:mt-0"
-        >
-          <div className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] lg:w-[380px] lg:h-[380px] flex items-center justify-center">
-            {/* Background Glows with Symmetrical sizing */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-accent-cyan/15 via-accent-indigo/15 to-transparent rounded-full blur-[60px] md:blur-[70px] animate-pulse"></div>
-            
-            {/* Symmetrical glowing neon frame border circle */}
-            <div className="absolute inset-0 rounded-full border-4 border-accent-indigo/35 shadow-[0_0_40px_rgba(99,102,241,0.3)] lg:shadow-[0_0_50px_rgba(99,102,241,0.35)] z-0"></div>
-            
-            {/* The Image with Symmetrical Sizing */}
-            <img 
-              src={avatarImg} 
-              alt="Prince Gajera Cute Chibi Robot" 
-              className="w-full h-full object-cover rounded-full z-10 hover:scale-105 hover:-rotate-1 transition-all duration-500 cursor-pointer"
+              className="text-custom-carrotOrange"
             />
           </div>
-        </motion.div>
+
+          <p className="hero-text-item text-gray-400 text-base md:text-lg mb-8 max-w-xl leading-relaxed font-sans font-light opacity-0">
+            I build fast, scalable, and beautifully designed web applications.
+            Right now, I'm focused on creating intuitive digital platforms and exploring practical Generative AI.
+          </p>
+
+          <div className="hero-text-item flex flex-wrap gap-4 mb-8 opacity-0">
+            <Link to="/projects" className="px-6 py-3 rounded-full bg-custom-carrotOrange text-custom-richBlack font-semibold shadow-lg hover:shadow-custom-carrotOrange/30 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 group text-sm md:text-base">
+              <span>View Portfolio</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <a href={resumeImg} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-transparent border border-white/20 text-white font-medium hover:bg-white/5 hover:border-white/40 transition-all duration-300 text-sm md:text-base">
+              Download Resume
+            </a>
+          </div>
+
+          {/* Stats with count-up animations */}
+          <div className="hero-text-item grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-2xl border-t border-white/10 pt-6 opacity-0">
+            <div>
+              <p className="text-3xl font-bold text-white mb-1 font-heading">
+                <AnimatedCounter value="17+" />
+              </p>
+              <p className="text-[10px] md:text-xs text-gray-400 font-mono tracking-widest uppercase">Projects</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-white mb-1 font-heading">
+                <AnimatedCounter value="2" />
+              </p>
+              <p className="text-[10px] md:text-xs text-gray-400 font-mono tracking-widest uppercase">Internships</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-white mb-1 font-heading">B.E.</p>
+              <p className="text-[10px] md:text-xs text-gray-400 font-mono tracking-widest uppercase">Computer Eng.</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-white mb-1 font-heading">2027</p>
+              <p className="text-[10px] md:text-xs text-gray-400 font-mono tracking-widest uppercase">Batch</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Professional Premium Image container with GSAP */}
+        <div className="flex w-full lg:w-1/2 justify-center items-center relative mt-12 lg:mt-0">
+          <div 
+            ref={imageRef}
+            className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center group opacity-0"
+          >
+            {/* Elegant Glow instead of cheesy neon */}
+            <div className="absolute inset-0 bg-custom-midnightGreen/20 rounded-full blur-[80px] transition-all duration-700 group-hover:bg-custom-carrotOrange/20 group-hover:blur-[100px]"></div>
+            
+            {/* Minimalist Professional Border Ring */}
+            <div className="absolute inset-[-10px] rounded-full border border-custom-midnightGreen/30 shadow-2xl z-0 transition-transform duration-700 group-hover:scale-105"></div>
+            <div className="absolute inset-[-25px] rounded-full border border-custom-carrotOrange/10 z-0 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-12"></div>
+            
+            <img 
+              src={avatarImg} 
+              alt="Prince Gajera" 
+              className="w-full h-full object-cover rounded-full z-10 shadow-2xl brightness-95 contrast-105 filter group-hover:brightness-100 transition-all duration-500"
+              style={{
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)'
+              }}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );

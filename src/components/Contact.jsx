@@ -1,12 +1,36 @@
 import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { Send, CheckCircle, AlertCircle, Mail, MapPin, Phone, Github, Linkedin, Instagram } from 'lucide-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Contact = () => {
+  const sectionRef = useRef(null);
   const formRef = useRef();
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null); // 'success' or 'error'
+
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+      }
+    });
+
+    tl.fromTo('.contact-header', 
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+    )
+    .fromTo('.contact-form-container', 
+      { opacity: 0, y: 40 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 
+      "-=0.2"
+    );
+  }, { scope: sectionRef });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,8 +69,6 @@ const Contact = () => {
       } else {
         const errorData = await response.json();
         console.error("Formspree Error:", errorData);
-        // Fallback for localhost testing - show success anyway so you can test UI
-        // It will work properly once deployed to Vercel
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
            setStatus('success');
            setForm({ name: '', email: '', message: '' });
@@ -69,73 +91,65 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-14 relative">
+    <section id="contact" ref={sectionRef} className="py-14 relative bg-custom-richBlack">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-8 text-center max-w-2xl mx-auto"
-        >
-          <p className="text-lg md:text-xl font-bold tracking-wide text-accent-indigo font-mono mb-2">05. What's Next?</p>
-          <h2 className="text-3xl md:text-4xl font-heading font-bold mb-3 text-white">Get In Touch</h2>
-          <p className="text-gray-400 text-base leading-relaxed">
+        <div className="mb-12 flex flex-col items-center text-center max-w-2xl mx-auto contact-header opacity-0">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 flex items-center justify-center">
+            <span className="text-custom-carrotOrange mr-2">05.</span> What's Next?
+          </h2>
+          <p className="text-gray-400 text-lg font-light">
             I'm currently looking for new opportunities. Whether you have a question or just want to say hi, 
             I'll try my best to get back to you!
           </p>
-        </motion.div>
+        </div>
 
-        <div className="max-w-2xl mx-auto mt-12">
+        <div className="max-w-2xl mx-auto mt-12 contact-form-container opacity-0">
           {/* Contact Form - Centered perfectly */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="glass p-8 rounded-2xl flex flex-col shadow-2xl border border-white/5"
-          >
+          <div className="glass p-8 rounded-2xl flex flex-col shadow-2xl border border-white/5 relative overflow-hidden group">
+            {/* Elegant Background gradient */}
+            <div className="absolute -top-32 -right-32 w-64 h-64 bg-custom-midnightGreen/20 blur-[80px] rounded-full group-hover:bg-custom-carrotOrange/10 transition-colors duration-1000"></div>
+
             <form 
               ref={formRef} 
               onSubmit={handleSubmit} 
-              className="space-y-6 flex flex-col flex-grow"
+              className="space-y-6 flex flex-col flex-grow relative z-10"
             >
               <div className="space-y-5">
                 <div>
-                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">Name</label>
+                  <label htmlFor="name" className="block text-xs md:text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wider">Name</label>
                   <input
                     type="text"
                     id="name"
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all placeholder-gray-600 hover:bg-white/10 shadow-sm"
+                    className="w-full bg-custom-richBlack/50 border border-white/10 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-custom-carrotOrange focus:ring-1 focus:ring-custom-carrotOrange transition-all placeholder-gray-600 hover:bg-custom-richBlack/80 shadow-sm"
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">Email</label>
+                  <label htmlFor="email" className="block text-xs md:text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wider">Email</label>
                   <input
                     type="email"
                     id="email"
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all placeholder-gray-600 hover:bg-white/10 shadow-sm"
+                    className="w-full bg-custom-richBlack/50 border border-white/10 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-custom-carrotOrange focus:ring-1 focus:ring-custom-carrotOrange transition-all placeholder-gray-600 hover:bg-custom-richBlack/80 shadow-sm"
                     placeholder="john@example.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-xs md:text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">Message</label>
+                  <label htmlFor="message" className="block text-xs md:text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wider">Message</label>
                   <textarea
                     id="message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}
                     rows="4"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan transition-all resize-none placeholder-gray-600 min-h-[140px] hover:bg-white/10 shadow-sm"
+                    className="w-full bg-custom-richBlack/50 border border-white/10 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-custom-carrotOrange focus:ring-1 focus:ring-custom-carrotOrange transition-all resize-none placeholder-gray-600 min-h-[140px] hover:bg-custom-richBlack/80 shadow-sm"
                     placeholder="Your message here..."
                   ></textarea>
                 </div>
@@ -159,21 +173,21 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full relative py-4 bg-gradient-to-r from-accent-indigo to-accent-cyan text-white rounded-xl font-bold shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed group overflow-hidden"
+                  className="w-full relative py-4 bg-gradient-to-r from-custom-midnightGreen to-custom-carrotOrange text-white rounded-xl font-bold shadow-lg hover:shadow-custom-carrotOrange/30 transition-all duration-300 flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed group overflow-hidden"
                 >
-                  <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></span>
+                  <span className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></span>
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin relative z-10"></div>
                   ) : (
                     <>
-                      <span className="relative z-10 text-sm md:text-base uppercase tracking-wider font-bold">Send Message</span>
+                      <span className="relative z-10 text-sm md:text-base uppercase tracking-widest font-bold font-mono">Send Message</span>
                       <Send size={16} className="relative z-10 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" strokeWidth={2.5} />
                     </>
                   )}
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

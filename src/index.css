@@ -2,13 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-custom-richBlack text-gray-200 antialiased overflow-x-hidden;
+  }
+}
+
 @layer utilities {
   .glass {
-    @apply bg-white/5 backdrop-blur-md border border-white/10;
+    @apply bg-custom-richBlack/60 backdrop-blur-lg border border-white/10 shadow-2xl;
   }
   
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-indigo via-accent-purple to-accent-cyan;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-custom-midnightGreen via-custom-carrotOrange to-custom-gargoyleGas;
+  }
+  
+  .group:hover .group-hover-text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-custom-midnightGreen via-custom-carrotOrange to-custom-gargoyleGas;
   }
 }
 
@@ -18,19 +28,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: #050B14; /* custom-richBlack */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a35;
+  background: #1E293B; /* custom-darkPurple */
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6366f1;
+  background: #3B82F6; /* custom-carrotOrange */
 }
 
-/* Base styles to prevent horizontal scroll issues with framer motion */
+/* Base styles to prevent horizontal scroll issues */
 body {
   overflow-x: hidden;
 }

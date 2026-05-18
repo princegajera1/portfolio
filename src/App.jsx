@@ -10,7 +10,7 @@ const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 
 function App() {
   return (
-    <div className="bg-dark min-h-screen text-gray-200 font-sans relative">
+    <div className="bg-custom-richBlack min-h-screen text-gray-200 font-sans relative">
       <Helmet>
         <title>Gajera Prince | Full Stack Developer</title>
         <meta name="description" content="Portfolio of Gajera Prince, a Full Stack Developer & Generative AI Enthusiast from Ahmedabad, Gujarat." />
@@ -21,9 +21,9 @@ function App() {
 
       {/* Animated Background Orbs */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-indigo/20 blur-[120px] animate-float"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-accent-purple/20 blur-[120px] animate-float-delayed"></div>
-        <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] rounded-full bg-accent-cyan/20 blur-[100px] animate-float"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-custom-midnightGreen/15 blur-[150px] animate-float"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-custom-carrotOrange/10 blur-[150px] animate-float-delayed"></div>
+        <div className="absolute top-[40%] right-[10%] w-[20%] h-[20%] rounded-full bg-custom-gargoyleGas/10 blur-[120px] animate-float"></div>
       </div>
 
       {/* Main Content */}
@@ -31,7 +31,7 @@ function App() {
         <Navbar />
         
         <main className="flex-grow">
-          <Suspense fallback={<div className="h-screen flex items-center justify-center"><div className="w-10 h-10 border-4 border-accent-indigo border-t-transparent rounded-full animate-spin"></div></div>}>
+          <Suspense fallback={<div className="h-screen flex items-center justify-center"><div className="w-10 h-10 border-4 border-custom-carrotOrange border-t-transparent rounded-full animate-spin"></div></div>}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/projects" element={<ProjectsPage />} />
