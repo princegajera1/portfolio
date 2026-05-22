@@ -1,46 +1,36 @@
-# 🚀 Prince Gajera - Professional Developer Portfolio
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-Welcome to the source code of my personal developer portfolio! This project is a highly interactive, responsive, and aesthetically pleasing web application designed to showcase my skills, projects, and professional experience.
+## Getting Started
 
-## ✨ Features
-- **Modern UI Design**: High-end frosted glass aesthetics with dynamic neon glows.
-- **Smooth Animations**: Powered by Framer Motion for scroll-spy navigation, page loads, and hover effects.
-- **Fully Responsive**: Flawless experience across desktop, tablet, and mobile devices.
-- **Dynamic Projects Showcase**: Project cards featuring beautiful multi-colored neon themes.
-- **Working Contact Form**: Seamless direct email delivery using FormSubmit.
+First, run the development server:
 
-## 🛠️ Tech Stack
-- **Frontend Framework**: React.js
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
-- **Routing**: React Router DOM
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## 💻 Running Locally
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-To run this project on your local machine, follow these steps:
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/princegajera1/portfolio.git
-   cd portfolio
-   ```
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+## Learn More
 
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+To learn more about Next.js, take a look at the following resources:
 
-4. Open your browser and navigate to `http://localhost:5173`.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 📬 Contact
-- **Email:** princegajera944@gmail.com
-- **GitHub:** [@princegajera1](https://github.com/princegajera1)
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
----
-*Designed & Built with ❤️ by Prince Gajera*
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

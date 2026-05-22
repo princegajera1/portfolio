@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: initial; /* Essential for Lenis to control scroll */
+  }
+  
+  body {
+    background-color: #0a0a0f;
+    color: #e2e8f0; /* text-slate-200 */
+    @apply antialiased overflow-x-hidden font-sans selection:bg-[#8b5cf6]/30 selection:text-[#00f0ff];
+  }
+
+  /* Custom input styles */
+  input, textarea, select {
+    @apply outline-none bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#6366f1]/50 focus:ring-1 focus:ring-[#6366f1]/50 transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  /* High-end glassmorphism */
+  .glass {
+    background: rgba(10, 10, 15, 0.45);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    transition: border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(99, 102, 241, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  /* Custom gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00f0ff] via-[#6366f1] to-[#8b5cf6];
+  }
+  
+  .bg-gradient-mesh {
+    background-image: 
+      radial-gradient(at 10% 20%, rgba(0, 240, 255, 0.05) 0px, transparent 50%),
+      radial-gradient(at 90% 10%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+      radial-gradient(at 50% 80%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+  }
+
+  /* Subtle Noise Texture Overlay */
+  .noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    content: "";
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Magnetic boundaries */
+  .magnetic-area {
+    display: inline-block;
+    position: relative;
+  }
+
+  /* Hide scrollbar for Chrome, Safari, Opera, Edge, IE, and Firefox */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* Custom Scrollbar matching electric neon themes */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.15);
+  border-radius: 99px;
+  border: 2px solid #0a0a0f;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+/* Lenis smooth scrolling rules */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overflow: clip;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Horizontal Scroll pinning container helpers */
+.horizontal-scroll-container {
+  display: flex;
+  flex-wrap: nowrap;
+  will-change: transform;
+}
+
+/* Infinite Marquee Animations */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left 35s linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 35s linear infinite;
+}
+
