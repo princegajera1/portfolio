@@ -22,7 +22,7 @@ export default function Dashboard() {
   // Resume states
   const [resumeFile, setResumeFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null);
-  const [resumeData, setResumeData] = useState({ url: '', filename: '', uploadedAt: null });
+  const [resumeData, setResumeData] = useState({ url: '/resume.pdf', filename: 'resume.pdf', uploadedAt: null });
   const [isDragOver, setIsDragOver] = useState(false);
 
   // Greeting & Live Ticking Clock states
@@ -95,13 +95,15 @@ export default function Dashboard() {
         if (snapshot.exists()) {
           const data = snapshot.data();
           setResumeData({
-            url: data.url || '',
-            filename: data.filename || '',
+            url: data.url || '/resume.pdf',
+            filename: data.filename || 'resume.pdf',
             uploadedAt: data.uploadedAt || null
           });
           if (data.url) {
             localStorage.setItem('resume_url', data.url);
           }
+        } else {
+          setResumeData({ url: '/resume.pdf', filename: 'resume.pdf', uploadedAt: null });
         }
       }, (err) => {
         console.error("Resume doc snapshot error:", err);
@@ -151,14 +153,16 @@ export default function Dashboard() {
           if (localResume.url.startsWith('blob:')) {
             localStorage.removeItem('resume_url');
             localStorage.removeItem('prince_resume_metadata');
-            setResumeData({ url: '', filename: '', uploadedAt: null });
+            setResumeData({ url: '/resume.pdf', filename: 'resume.pdf', uploadedAt: null });
           } else {
             setResumeData({
               url: localResume.url,
-              filename: localResume.filename || 'prince_gajera_resume.pdf',
+              filename: localResume.filename || 'resume.pdf',
               uploadedAt: localResume.uploadedAt
             });
           }
+        } else {
+          setResumeData({ url: '/resume.pdf', filename: 'resume.pdf', uploadedAt: null });
         }
         setLoading(false);
       };
@@ -304,7 +308,7 @@ export default function Dashboard() {
       if (resumeData.url.startsWith('blob:')) {
         localStorage.removeItem('resume_url');
         localStorage.removeItem('prince_resume_metadata');
-        setResumeData({ url: '', filename: '', uploadedAt: null });
+        setResumeData({ url: '/resume.pdf', filename: 'resume.pdf', uploadedAt: null });
         toast.error("The previous session's resume file has expired. Please upload a new PDF.");
         return;
       }

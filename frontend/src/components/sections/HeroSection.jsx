@@ -12,7 +12,7 @@ export default function HeroSection() {
   const toast = useToast();
   const typedRef = useRef(null);
   const [projectsCount, setProjectsCount] = useState(19);
-  const [resumeUrl, setResumeUrl] = useState('#');
+  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
   useHeroAnimation();
 
   // Dynamic Coding Experience Auto-calculation
@@ -31,10 +31,12 @@ export default function HeroSection() {
       if (savedResume.startsWith('blob:')) {
         localStorage.removeItem('resume_url');
         localStorage.removeItem('prince_resume_metadata');
-        setResumeUrl('#');
+        setResumeUrl('/resume.pdf');
       } else {
         setResumeUrl(savedResume);
       }
+    } else {
+      setResumeUrl('/resume.pdf');
     }
 
     // Fetch total projects dynamically
@@ -63,7 +65,7 @@ export default function HeroSection() {
       if (savedResume) {
         setResumeUrl(savedResume);
       } else {
-        setResumeUrl('#');
+        setResumeUrl('/resume.pdf');
       }
     };
     window.addEventListener('storage', handleStorageChange);
@@ -172,7 +174,7 @@ export default function HeroSection() {
                 if (resumeUrl.startsWith('blob:')) {
                   localStorage.removeItem('resume_url');
                   localStorage.removeItem('prince_resume_metadata');
-                  setResumeUrl('#');
+                  setResumeUrl('/resume.pdf');
                   toast.error("The resume file has expired. Please upload a new PDF in the admin panel.");
                   return;
                 }
