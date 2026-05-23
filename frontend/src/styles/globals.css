@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark text-gray-300 font-sans overflow-x-hidden selection:bg-primary/30 selection:text-white;
+  }
+}
+
+/* Custom Cursor Glow */
+.cursor-glow {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #6C63FF;
+  mix-blend-mode: screen;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px #6C63FF, 0 0 40px #6C63FF;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+.cursor-hover {
+  width: 48px;
+  height: 48px;
+  background-color: #00D4FF;
+  box-shadow: 0 0 25px #00D4FF, 0 0 50px #00D4FF;
+}
+
+/* Dark Neon Glow System */
+.neon-text-primary {
+  text-shadow: 0 0 10px rgba(108, 99, 255, 0.4), 0 0 20px rgba(108, 99, 255, 0.2);
+}
+
+.neon-text-secondary {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+.neon-text-accent {
+  text-shadow: 0 0 10px rgba(255, 107, 157, 0.4), 0 0 20px rgba(255, 107, 157, 0.2);
+}
+
+.neon-border-primary {
+  box-shadow: 0 0 15px rgba(108, 99, 255, 0.1);
+  border-color: rgba(108, 99, 255, 0.2);
+}
+
+.neon-border-secondary {
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.2);
+}
+
+.neon-card {
+  @apply bg-surface-2 border border-white/5 hover:border-primary/50 transition-all duration-500 rounded-2xl hover:shadow-lg hover:shadow-primary/10;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(18, 18, 26, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-nav {
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0F;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A1A28;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6C63FF;
+}
+
+/* Custom classes for Admin Panel Inputs */
+.admin-input {
+  @apply w-full bg-surface border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition-all duration-300 focus:ring-2 focus:ring-primary/20;
+}
+
+.admin-btn {
+  @apply bg-primary hover:bg-primary/80 text-white rounded-lg font-semibold px-6 py-3 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+}
+
+/* Subtle Pulsing neon glow animation on hover for Admin triggers */
+.admin-btn-glow {
+  transition: all 0.3s ease;
+}
+
+.admin-btn-glow:hover {
+  animation: adminPulse 1.5s infinite alternate;
+}
+
+@keyframes adminPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(108, 99, 255, 0.2);
+    border-color: rgba(108, 99, 255, 0.4);
+    background-color: rgba(108, 99, 255, 0.05);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.6), 0 0 35px rgba(0, 212, 255, 0.2);
+    border-color: rgba(108, 99, 255, 0.9);
+    background-color: rgba(108, 99, 255, 0.2);
+    color: #fff;
+  }
+}
+
+/* Toast animations */
+.animate-slide-in {
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-out {
+  animation: slideOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-deplete {
+  animation: deplete 4s linear forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes deplete {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
