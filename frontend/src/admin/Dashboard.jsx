@@ -314,25 +314,8 @@ export default function Dashboard() {
       }
       
       try {
-        const newWindow = window.open();
-        if (newWindow) {
-          newWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <title>Prince Gajera - Resume</title>
-                <style>
-                  body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0b0f19; }
-                  iframe { border: none; width: 100%; height: 100%; }
-                </style>
-              </head>
-              <body>
-                <iframe src="${resumeData.url}"></iframe>
-              </body>
-            </html>
-          `);
-          newWindow.document.close();
-        } else {
+        const win = window.open(resumeData.url, '_blank', 'noopener,noreferrer');
+        if (!win) {
           toast.error("Popup blocked! Please allow popups to view the resume.");
         }
       } catch (err) {

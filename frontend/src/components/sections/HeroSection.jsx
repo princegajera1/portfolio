@@ -155,7 +155,7 @@ export default function HeroSection() {
           </h1>
           
           <div className="hero-role text-lg sm:text-xl md:text-2xl font-mono text-gray-400 min-h-[36px] select-none">
-            Working as a <span ref={typedRef} className="text-secondary font-bold inline-block min-w-[280px] sm:min-w-[320px] text-left" style={{ overflow: 'visible' }} />
+            Working as a <span ref={typedRef} className="text-secondary font-bold" />
           </div>
           
           <p className="hero-bio text-gray-500 max-w-xl text-xs sm:text-sm md:text-base leading-relaxed font-sans animate-fade-in">
@@ -170,28 +170,23 @@ export default function HeroSection() {
             >
               Explore Projects
             </a>
-            <button 
-              onClick={() => {
+            <a 
+              href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
                 if (resumeUrl === '#' || !resumeUrl) {
+                  e.preventDefault();
                   toast.info("No resume uploaded yet! Please upload a PDF in the admin panel Stats tab.");
                   return;
                 }
                 if (resumeUrl.startsWith('blob:')) {
+                  e.preventDefault();
                   localStorage.removeItem('resume_url');
                   localStorage.removeItem('prince_resume_metadata');
                   setResumeUrl('/resume.pdf');
                   toast.error("The resume file has expired. Please upload a new PDF in the admin panel.");
                   return;
-                }
-                
-                try {
-                  const win = window.open(resumeUrl, '_blank', 'noopener,noreferrer');
-                  if (!win) {
-                    toast.error("Popup blocked! Please allow popups to view the resume.");
-                  }
-                } catch (e) {
-                  console.error(e);
-                  toast.error("Error opening PDF viewer.");
                 }
               }}
               className="px-6 py-3.5 border border-secondary/40 hover:border-secondary text-secondary hover:text-white 
@@ -202,7 +197,7 @@ export default function HeroSection() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               <span>View CV</span>
-            </button>
+            </a>
             <a 
               href="#contact" 
               className="px-6 py-3.5 border border-white/10 hover:border-primary text-gray-300 hover:text-white 
