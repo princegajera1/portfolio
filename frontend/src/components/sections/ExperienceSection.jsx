@@ -123,9 +123,12 @@ export default function ExperienceSection() {
                         {exp.company.includes('Shreeji') ? (() => {
                           const start = new Date('2026-04-15');
                           const now = new Date();
-                          const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
-                          const ongoingMonths = diffMonths + (now.getDate() >= start.getDate() ? 1 : 0);
-                          return `April 15, 2026 – Present (${ongoingMonths} Mos completed)`;
+                          let diff = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+                          if (now.getDate() < start.getDate()) {
+                            diff--;
+                          }
+                          const completedMonths = Math.max(1, diff);
+                          return `April 15, 2026 – Present (${completedMonths} ${completedMonths === 1 ? 'Month' : 'Months'} completed)`;
                         })() : exp.duration}
                       </span>
                       {exp.company.includes('Shreeji') && (

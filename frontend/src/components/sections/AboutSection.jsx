@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ParticleBackground from '../ParticleBackground';
 import { useScrollReveal } from '../../hooks/useGSAP';
 import gsap from 'gsap';
+import { getExperience } from '../../firebase/experience';
 
 export default function AboutSection() {
   useScrollReveal('.scroll-reveal-about');
+  const [internshipMonths, setInternshipMonths] = useState(2);
+  const [internshipCount, setInternshipCount] = useState(2);
 
   useEffect(() => {
     // Card animation trigger
@@ -21,6 +24,40 @@ export default function AboutSection() {
         }
       }
     );
+
+    // Fetch and calculate internships dynamically
+    const fetchAndCalculateInternships = async () => {
+      try {
+        const data = await getExperience();
+        if (data && data.length) {
+          const interns = data.filter(e => e.role.toLowerCase().includes('intern'));
+          setInternshipCount(interns.length);
+
+          let totalMonths = 0;
+          interns.forEach(e => {
+            if (e.current || e.company.includes('Shreeji')) {
+              // Shreeji Software starting April 15, 2026
+              const start = new Date('2026-04-15');
+              const now = new Date();
+              let diff = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+              if (now.getDate() < start.getDate()) {
+                diff--;
+              }
+              const ongoing = Math.max(1, diff);
+              totalMonths += ongoing;
+            } else if (e.company.includes('Prodigy')) {
+              totalMonths += 1; // 1 month for completed Generative AI Internship
+            } else {
+              totalMonths += 1;
+            }
+          });
+          setInternshipMonths(totalMonths);
+        }
+      } catch (e) {
+        console.error("Error fetching internships in AboutSection:", e);
+      }
+    };
+    fetchAndCalculateInternships();
   }, []);
 
   const facts = [
@@ -71,7 +108,7 @@ export default function AboutSection() {
   "year": "3rd Year B.E.",
   "location": "Ahmedabad, Gujarat",
   "status": "Available for hire",
-  "internships": 2,
+  "internships": ${internshipCount},
   "coffee": "Infinite",
   "editor": "VS Code",
   "github": "princegajera1",
@@ -101,13 +138,7 @@ export default function AboutSection() {
             <div className="flex flex-wrap gap-3 pt-2 pb-4 select-none justify-center md:justify-start">
               {[
                 '🎓 B.E. Computer Engg', 
-                `💼 ${(() => {
-                  const start = new Date('2026-04-15');
-                  const now = new Date();
-                  const diffMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
-                  const ongoingMonths = diffMonths + (now.getDate() >= start.getDate() ? 1 : 0);
-                  return 1 + ongoingMonths;
-                })()} Mos Internships`, 
+                `💼 ${internshipMonths} Mos Internships`, 
                 '📍 Ahmedabad, India'
               ].map((badge, idx) => (
                 <span key={idx} className="px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold bg-secondary/10 border border-secondary/20 text-secondary shadow-[0_0_10px_rgba(0,212,255,0.05)]">

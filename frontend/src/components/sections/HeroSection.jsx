@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import Typed from 'typed.js';
 import ParticleBackground from '../ParticleBackground';
@@ -9,6 +9,7 @@ import { getProjects } from '../../firebase/projects';
 import { useToast } from '../../context/ToastContext';
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   const toast = useToast();
   const typedRef = useRef(null);
   const [projectsCount, setProjectsCount] = useState(19);
@@ -54,13 +55,7 @@ export default function HeroSection() {
 
     // Listen for custom updates
     const handleStorageChange = () => {
-      const saved = localStorage.getItem('prince_projects');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          setProjectsCount(parsed.length);
-        } catch (e) {}
-      }
+      fetchCount();
       const savedResume = localStorage.getItem('resume_url');
       if (savedResume) {
         setResumeUrl(savedResume);
@@ -100,6 +95,15 @@ export default function HeroSection() {
       });
     });
 
+    // Gentle float for the tagline text (no rotation)
+    gsap.to('.hero-floating-tag', {
+      y: -12,
+      duration: 4,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1
+    });
+
     // Smooth Infinite Floating & Breathing Animation for the tilted 3D Robot Card (3-5deg range)
     gsap.set('.hero-robot-container', { rotation: '4deg' });
     gsap.to('.hero-robot-container', {
@@ -133,14 +137,15 @@ export default function HeroSection() {
       <div className="float-shape absolute bottom-28 right-[10%] w-12 h-12 border border-secondary/20 rounded-full pointer-events-none hidden sm:block"
            style={{ boxShadow: '0 0 15px rgba(0, 212, 255, 0.03)' }} />
       <div className="float-shape absolute top-1/3 right-[15%] w-8 h-8 border border-accent/25 rotate-12 rounded pointer-events-none hidden md:block" />
-      <div className="float-shape absolute bottom-1/3 left-[12%] w-10 h-10 border border-primary/10 rotate-90 rounded-md pointer-events-none hidden md:block" />
+      <div className="float-shape absolute bottom-1/3 left-[4%] w-8 h-8 border border-primary/10 rotate-90 rounded-md pointer-events-none hidden lg:block" />
 
       {/* Split Screen Master Grid Content */}
       <div className="max-w-7xl w-full mx-auto px-6 sm:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
         {/* Left Side Column - Narrative & Typography */}
         <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-          <div className="hero-tagline font-mono text-xs sm:text-sm text-secondary tracking-widest uppercase mb-1">
+          <div className="hero-tagline font-mono text-xs sm:text-sm text-secondary tracking-widest uppercase mb-1 flex items-center gap-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_#00e5ff] flex-shrink-0" />
             &lt; Hello, World! /&gt; — I'm
           </div>
           
@@ -150,14 +155,14 @@ export default function HeroSection() {
           </h1>
           
           <div className="hero-role text-lg sm:text-xl md:text-2xl font-mono text-gray-400 min-h-[36px] select-none">
-            Working as a <span ref={typedRef} className="text-secondary font-bold" />
+            Working as a <span ref={typedRef} className="text-secondary font-bold inline-block min-w-[280px] sm:min-w-[320px] text-left" style={{ overflow: 'visible' }} />
           </div>
           
           <p className="hero-bio text-gray-500 max-w-xl text-xs sm:text-sm md:text-base leading-relaxed font-sans animate-fade-in">
             I build high-end things for the web. From crafting fluid visual interfaces in React to designing structured serverless architectures in Firebase — I focus on performance, clean code, and dynamic details.
           </p>
-
-          <div className="hero-cta flex flex-wrap gap-3 justify-center lg:justify-start items-center select-none pt-4">
+ 
+           <div className="hero-cta flex flex-wrap gap-3 justify-center lg:justify-start items-center select-none pt-4">
             <a 
               href="#projects" 
               className="px-6 py-3.5 bg-primary hover:bg-primary/80 text-white rounded-xl text-xs sm:text-sm font-semibold tracking-wide
@@ -180,25 +185,8 @@ export default function HeroSection() {
                 }
                 
                 try {
-                  const newWindow = window.open();
-                  if (newWindow) {
-                    newWindow.document.write(`
-                      <!DOCTYPE html>
-                      <html>
-                        <head>
-                          <title>Prince Gajera - Resume</title>
-                          <style>
-                            body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0b0f19; }
-                            iframe { border: none; width: 100%; height: 100%; }
-                          </style>
-                        </head>
-                        <body>
-                          <iframe src="${resumeUrl}"></iframe>
-                        </body>
-                      </html>
-                    `);
-                    newWindow.document.close();
-                  } else {
+                  const win = window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+                  if (!win) {
                     toast.error("Popup blocked! Please allow popups to view the resume.");
                   }
                 } catch (e) {
@@ -207,13 +195,13 @@ export default function HeroSection() {
                 }
               }}
               className="px-6 py-3.5 border border-secondary/40 hover:border-secondary text-secondary hover:text-white 
-                         rounded-xl text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:bg-secondary/5 hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+                         rounded-xl text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:bg-secondary/5 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
             >
-              <span>View CV</span>
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
+              <span>View CV</span>
             </button>
             <a 
               href="#contact" 
@@ -224,21 +212,21 @@ export default function HeroSection() {
             </a>
           </div>
 
-          {/* Dynamic Stats Row with vertical dividers | and balanced spacing */}
-          <div className="hero-cta flex justify-between items-center w-full max-w-md border-t border-white/5 pt-10 select-none text-center lg:text-left font-mono">
+          {/* Dynamic Stats Row with vertical dividers and balanced spacing */}
+          <div className="hero-cta flex justify-between items-center w-full max-w-lg border-t border-[#7C6FFF]/15 pt-8 select-none text-center font-mono">
             <div className="flex-1">
-              <div className="text-lg sm:text-2xl font-extrabold text-primary">{projectsCount}+</div>
-              <div className="text-[9px] sm:text-xs text-gray-500 mt-1 uppercase tracking-wider">REPOS BUILT</div>
+              <div className="text-2xl sm:text-3xl font-black text-primary tracking-tight">{projectsCount}+</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1.5 uppercase tracking-widest">REPOS BUILT</div>
             </div>
-            <span className="text-white/10 font-light mx-2 sm:mx-4 select-none">|</span>
+            <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-white/10 to-transparent mx-4 flex-shrink-0" />
             <div className="flex-1 text-center">
-              <div className="text-lg sm:text-2xl font-extrabold text-primary">{getCodingExp()}</div>
-              <div className="text-[9px] sm:text-xs text-gray-500 mt-1 uppercase tracking-wider">CODING EXP</div>
+              <div className="text-2xl sm:text-3xl font-black text-primary tracking-tight">{getCodingExp()}</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1.5 uppercase tracking-widest">CODING EXP</div>
             </div>
-            <span className="text-white/10 font-light mx-2 sm:mx-4 select-none">|</span>
-            <div className="flex-1 text-center lg:text-right">
-              <div className="text-lg sm:text-2xl font-extrabold text-primary">100%</div>
-              <div className="text-[9px] sm:text-xs text-gray-500 mt-1 uppercase tracking-wider">COMMITMENT</div>
+            <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-white/10 to-transparent mx-4 flex-shrink-0" />
+            <div className="flex-1 text-center">
+              <div className="text-2xl sm:text-3xl font-black text-primary tracking-tight">100%</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1.5 uppercase tracking-widest">COMMITMENT</div>
             </div>
           </div>
         </div>
@@ -254,6 +242,21 @@ export default function HeroSection() {
               alt="Prince's 3D Robot Avatar"
               className="w-full h-full object-contain rounded-2xl filter drop-shadow-[0_10px_30px_rgba(0,212,255,0.15)]"
             />
+            
+            {/* Secret Admin Portal Easter Egg (Clickable Eyes - Invisible Link) */}
+            <div
+              onClick={() => navigate('/admin/login')}
+              className="absolute cursor-pointer"
+              style={{
+                top: '23%',
+                left: '26%',
+                width: '48%',
+                height: '18%',
+                zIndex: 40
+              }}
+              title="Secure Admin Gateway"
+            />
+
             {/* Ambient small particles floating near the robot */}
             <div className="absolute -bottom-4 left-1/4 w-2 h-2 bg-secondary/30 rounded-full animate-ping" />
             <div className="absolute top-1/4 -right-2 w-1.5 h-1.5 bg-accent/25 rounded-full animate-pulse" />

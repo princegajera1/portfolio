@@ -166,3 +166,16 @@
     width: 0%;
   }
 }
+
+/* Typed.js cursor custom blink animation */
+.typed-cursor {
+  opacity: 1;
+  animation: typedBlink 0.7s infinite;
+  color: #00e5ff !important;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+}
+
+@keyframes typedBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

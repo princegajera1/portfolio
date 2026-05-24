@@ -106,12 +106,27 @@ export default function Navbar({ darkMode, setDarkMode }) {
           onClick={(e) => handleLinkClick(e, 'home')}
           className="text-2xl sm:text-[27px] font-extrabold font-display text-white tracking-widest flex items-center gap-3 group select-none"
         >
-          <span 
-            className="rounded-xl bg-[#0d0d1a]/60 border border-primary/45 flex items-center justify-center text-primary text-base sm:text-lg font-black font-display transition-all duration-300 group-hover:border-primary/90 group-hover:bg-primary/5 shadow-[0_0_15px_rgba(124,111,255,0.08)] group-hover:shadow-[0_0_20px_rgba(124,111,255,0.18)]"
-            style={{ width: '42px', height: '42px', minWidth: '42px', minHeight: '42px', letterSpacing: 'normal', lineHeight: '1' }}
-          >
-            PG
-          </span>
+          <div className="relative flex items-center justify-center w-11 h-11 transition-transform duration-300 group-hover:scale-105">
+            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full drop-shadow-[0_0_8px_rgba(0,245,255,0.4)] group-hover:drop-shadow-[0_0_12px_rgba(124,58,237,0.6)] transition-all duration-300">
+              <defs>
+                <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00f5ff" />
+                  <stop offset="100%" stopColor="#7c3aed" />
+                </linearGradient>
+              </defs>
+              <polygon
+                points="50,4 93,26 93,74 50,96 7,74 7,26"
+                fill="none"
+                stroke="url(#logo-grad)"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="relative font-display font-black text-sm tracking-tighter text-white group-hover:text-primary transition-colors duration-300 select-none">
+              PG
+            </span>
+          </div>
           <span className="hidden sm:inline bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent group-hover:text-primary transition-colors duration-300 font-bold">
             Prince Gajera
           </span>
@@ -155,9 +170,17 @@ export default function Navbar({ darkMode, setDarkMode }) {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Backdrop blur blue tint overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-[#03001e]/70 backdrop-blur-md z-[98] transition-opacity duration-300 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu Overlay Drawer */}
       <div 
-        className={`fixed inset-y-0 right-0 w-[260px] z-[99] bg-dark/95 border-l border-white/10 backdrop-blur-xl flex flex-col p-8 transition-transform duration-500 ease-out md:hidden ${
+        className={`fixed inset-y-0 right-0 w-[260px] z-[99] bg-[#060613] border-l border-[#00f5ff]/20 backdrop-blur-xl flex flex-col p-8 transition-transform duration-500 ease-out md:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
