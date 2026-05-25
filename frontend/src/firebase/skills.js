@@ -70,8 +70,10 @@ const getLocalSkills = () => {
   return [...initialSkillsSeed];
 };
 
+const isOfflineMode = () => !isFirebaseConfigured || !db || localStorage.getItem("mock_admin_logged") === "true";
+
 export const getSkills = async (includeDeleted = false) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let list = getLocalSkills();
     if (!includeDeleted) {
       list = list.filter(s => !s.deleted);
@@ -105,7 +107,7 @@ export const addSkill = async (skillData) => {
     deletedAt: null
   };
 
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     const local = getLocalSkills();
     const newSkill = { id: `mock-skill-${Date.now()}`, ...newSkillData };
     local.push(newSkill);
@@ -120,7 +122,7 @@ export const addSkill = async (skillData) => {
 };
 
 export const updateSkill = async (id, updates) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalSkills();
     local = local.map(s => s.id === id ? { ...s, ...updates } : s);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -136,7 +138,7 @@ export const updateSkill = async (id, updates) => {
 
 // Send skill to Recycle Bin (Trash System)
 export const deleteSkill = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalSkills();
     local = local.map(s => s.id === id ? { ...s, deleted: true, deletedAt: new Date().toISOString() } : s);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -152,7 +154,7 @@ export const deleteSkill = async (id) => {
 
 // Restore skill from Recycle Bin
 export const restoreSkill = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalSkills();
     local = local.map(s => s.id === id ? { ...s, deleted: false, deletedAt: null } : s);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -168,7 +170,7 @@ export const restoreSkill = async (id) => {
 
 // Permanent physical deletion
 export const permanentlyDeleteSkill = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalSkills();
     local = local.filter(s => s.id !== id);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));

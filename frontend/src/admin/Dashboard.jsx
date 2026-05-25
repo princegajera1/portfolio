@@ -73,7 +73,7 @@ export default function Dashboard() {
     let unsubMessages = () => {};
     let unsubResume = () => {};
 
-    if (isFirebaseConfigured && db && user) {
+    if (isFirebaseConfigured && db && user && localStorage.getItem("mock_admin_logged") !== "true") {
       // 1. Projects listener
       unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
         setStats((prev) => ({ ...prev, projects: snapshot.size }));

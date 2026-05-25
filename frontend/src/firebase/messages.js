@@ -49,6 +49,8 @@ const getLocalMessages = () => {
 
 let localMessages = getLocalMessages();
 
+const isOfflineMode = () => !isFirebaseConfigured || !db || localStorage.getItem("mock_admin_logged") === "true";
+
 export const saveMessage = async (name, email, message) => {
   const msgData = {
     name,
@@ -58,7 +60,7 @@ export const saveMessage = async (name, email, message) => {
     read: false
   };
 
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     const mockMsg = { id: `msg-${Date.now()}`, ...msgData };
     localMessages.unshift(mockMsg);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMessages));
@@ -71,7 +73,7 @@ export const saveMessage = async (name, email, message) => {
 };
 
 export const getMessages = async () => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     const list = [...localMessages].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     updateUnreadCount(list);
     return list;
@@ -90,7 +92,7 @@ export const getMessages = async () => {
 };
 
 export const deleteMessage = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     localMessages = localMessages.filter(m => m.id !== id);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMessages));
     updateUnreadCount(localMessages);
@@ -103,7 +105,7 @@ export const deleteMessage = async (id) => {
 };
 
 export const markAsRead = async (id, readStatus = true) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     localMessages = localMessages.map(m => m.id === id ? { ...m, read: readStatus } : m);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMessages));
     updateUnreadCount(localMessages);

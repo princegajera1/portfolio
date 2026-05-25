@@ -44,8 +44,10 @@ const getLocalExperience = () => {
   return [...initialExperienceSeed];
 };
 
+const isOfflineMode = () => !isFirebaseConfigured || !db || localStorage.getItem("mock_admin_logged") === "true";
+
 export const getExperience = async () => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     return getLocalExperience().sort((a, b) => a.order - b.order);
   }
 
@@ -65,7 +67,7 @@ export const getExperience = async () => {
 };
 
 export const addExperience = async (expData) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     const local = getLocalExperience();
     const newExp = { id: `mock-exp-${Date.now()}`, ...expData };
     local.push(newExp);
@@ -78,7 +80,7 @@ export const addExperience = async (expData) => {
 };
 
 export const updateExperience = async (id, updates) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalExperience();
     local = local.map(e => e.id === id ? { ...e, ...updates } : e);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -91,7 +93,7 @@ export const updateExperience = async (id, updates) => {
 };
 
 export const deleteExperience = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalExperience();
     local = local.filter(e => e.id !== id);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));

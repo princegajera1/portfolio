@@ -52,7 +52,7 @@ export default function ManageProjects() {
 
   // Instant local state update for localStorage mode
   const refreshProjects = () => {
-    if (isFirebaseConfigured && db && user) {
+    if (isFirebaseConfigured && db && user && localStorage.getItem("mock_admin_logged") !== "true") {
       // Handled automatically in real-time by Firebase onSnapshot
     } else {
       const local = JSON.parse(localStorage.getItem('prince_projects') || '[]');
@@ -66,7 +66,7 @@ export default function ManageProjects() {
   useEffect(() => {
     let unsubProjects = () => {};
 
-    if (isFirebaseConfigured && db && user) {
+    if (isFirebaseConfigured && db && user && localStorage.getItem("mock_admin_logged") !== "true") {
       setLoading(true);
       unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

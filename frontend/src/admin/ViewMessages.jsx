@@ -22,7 +22,7 @@ export default function ViewMessages() {
   useEffect(() => {
     let unsubSnapshot = () => {};
 
-    if (isFirebaseConfigured && db && user) {
+    if (isFirebaseConfigured && db && user && localStorage.getItem("mock_admin_logged") !== "true") {
       setLoading(true);
       unsubSnapshot = onSnapshot(collection(db, 'messages'), (snapshot) => {
         const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

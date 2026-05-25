@@ -35,7 +35,7 @@ export default function ManageSkills() {
 
   // Instant local updates for LocalStorage mode
   const refreshSkills = () => {
-    if (isFirebaseConfigured && db && user) {
+    if (isFirebaseConfigured && db && user && localStorage.getItem("mock_admin_logged") !== "true") {
       // Firebase real-time onSnapshot will update automatically
     } else {
       const local = JSON.parse(localStorage.getItem('prince_skills') || '[]');
@@ -49,7 +49,7 @@ export default function ManageSkills() {
   useEffect(() => {
     let unsubSkills = () => {};
 
-    if (isFirebaseConfigured && db && user) {
+    if (isFirebaseConfigured && db && user && localStorage.getItem("mock_admin_logged") !== "true") {
       setLoading(true);
       unsubSkills = onSnapshot(collection(db, 'skills'), (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

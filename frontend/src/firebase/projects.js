@@ -278,8 +278,10 @@ const getLocalProjects = () => {
   return [...initialProjectsSeed];
 };
 
+const isOfflineMode = () => !isFirebaseConfigured || !db || localStorage.getItem("mock_admin_logged") === "true";
+
 export const getProjects = async (category = null, includeDeleted = false) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let list = getLocalProjects();
     if (!includeDeleted) {
       list = list.filter(p => !p.deleted);
@@ -324,7 +326,7 @@ export const addProject = async (projectData) => {
     deletedAt: null
   };
 
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     const local = getLocalProjects();
     const mockProj = { id: `mock-${Date.now()}`, ...newProj };
     local.unshift(mockProj);
@@ -339,7 +341,7 @@ export const addProject = async (projectData) => {
 };
 
 export const updateProject = async (id, updates) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalProjects();
     local = local.map(p => p.id === id ? { ...p, ...updates } : p);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -355,7 +357,7 @@ export const updateProject = async (id, updates) => {
 
 // Send project to Recycle Bin (Trash System)
 export const deleteProject = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalProjects();
     local = local.map(p => p.id === id ? { ...p, deleted: true, deletedAt: new Date().toISOString() } : p);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -371,7 +373,7 @@ export const deleteProject = async (id) => {
 
 // Restore project from Recycle Bin
 export const restoreProject = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalProjects();
     local = local.map(p => p.id === id ? { ...p, deleted: false, deletedAt: null } : p);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));
@@ -387,7 +389,7 @@ export const restoreProject = async (id) => {
 
 // Permanent physical deletion
 export const permanentlyDeleteProject = async (id) => {
-  if (!isFirebaseConfigured || !db) {
+  if (isOfflineMode()) {
     let local = getLocalProjects();
     local = local.filter(p => p.id !== id);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(local));

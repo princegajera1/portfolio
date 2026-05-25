@@ -90,6 +90,18 @@ export default function AdminLayout() {
 
   // Live messages unread count snapshot listener
   useEffect(() => {
+    if (localStorage.getItem("mock_admin_logged") === "true") {
+      const checkLocalUnread = () => {
+        const localMsgs = JSON.parse(localStorage.getItem('prince_messages') || '[]');
+        const unread = localMsgs.filter(m => !m.read).length;
+        setUnreadCount(unread);
+      };
+      
+      checkLocalUnread();
+      const interval = setInterval(checkLocalUnread, 1500);
+      return () => clearInterval(interval);
+    }
+
     if (!isFirebaseConfigured || !db || !user) return;
 
     const unsubscribe = onSnapshot(collection(db, 'messages'), (snapshot) => {
