@@ -173,7 +173,8 @@ export default function Navbar({ darkMode, setDarkMode }) {
       {/* Backdrop blur blue tint overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-[#03001e]/70 backdrop-blur-md z-[98] transition-opacity duration-300 md:hidden"
+          className="fixed inset-0 bg-[#03001e]/70 z-[98] transition-opacity duration-300 md:hidden"
+          style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
           onClick={() => setIsOpen(false)}
         />
       )}
