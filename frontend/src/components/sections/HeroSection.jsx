@@ -128,7 +128,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center bg-dark overflow-hidden py-24 lg:py-0">
+    <section id="home" className="relative min-h-screen flex items-center bg-dark overflow-hidden pt-32 pb-20 lg:py-0">
       {/* Dynamic Purple/Blue Background Particle canvas */}
       <ParticleBackground color="#6C63FF" density={110} />
       
@@ -148,7 +148,7 @@ export default function HeroSection() {
         
         {/* Left Side Column - Narrative & Typography */}
         <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-          <div className="hero-tagline hero-floating-tag font-mono text-xs sm:text-sm text-secondary tracking-widest uppercase mb-1 flex items-center gap-2.5">
+          <div className="hero-tagline hero-floating-tag font-mono text-xs sm:text-sm text-secondary tracking-widest uppercase mt-6 sm:mt-0 mb-1 flex items-center gap-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_#00e5ff] flex-shrink-0" />
             &lt; Hello, World! /&gt; — I'm
           </div>
