@@ -170,18 +170,21 @@ export default function Navbar({ darkMode, setDarkMode }) {
         </div>
       </div>
 
-      {/* Backdrop blur blue tint overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-[#03001e]/70 z-[98] transition-opacity duration-300 md:hidden"
-          style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+          className="fixed inset-0 z-[98] md:hidden"
+          style={{ 
+            background: 'rgba(2, 0, 20, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)'
+          }}
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile Menu Overlay Drawer */}
       <div 
-        className={`fixed inset-y-0 right-0 w-[260px] z-[99] bg-[#0a0a1a] border-l border-[#00f5ff]/20 shadow-[-10px_0_30px_rgba(0,229,255,0.12)] flex flex-col p-8 transition-transform duration-500 ease-out md:hidden ${
+        className={`fixed inset-y-0 right-0 w-[280px] z-[99] bg-[#070714] border-l border-[#00f5ff]/20 shadow-[-10px_0_40px_rgba(0,229,255,0.15)] flex flex-col transition-transform duration-200 ease-out md:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

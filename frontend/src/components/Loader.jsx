@@ -11,7 +11,7 @@ export default function Loader({ onComplete }) {
         // Slide out loader
         gsap.to('.loader-container', {
           yPercent: -100,
-          duration: 0.8,
+          duration: 0.4,
           ease: 'power4.inOut',
           onComplete: onComplete
         });
@@ -20,7 +20,7 @@ export default function Loader({ onComplete }) {
 
     tl.to(obj, {
       value: 100,
-      duration: 1.8,
+      duration: 0.8,
       ease: 'power1.out',
       onUpdate: () => {
         setCount(Math.floor(obj.value));
