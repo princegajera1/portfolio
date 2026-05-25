@@ -32,7 +32,7 @@ if (isFirebaseConfigured) {
     auth = getAuth(app);
     storage = getStorage(app);
   } catch (error) {
-    console.error("Firebase initialization failed:", error);
+    console.error("Firebase initialization failed:", error);  
   }
 } else {
   console.warn(

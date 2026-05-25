@@ -40,23 +40,17 @@ export default function Login() {
     return input === ADMIN_USERNAME ? ADMIN_EMAIL : input;
   };
 
-  // Step 1: Username / Email verification
+  // Step 1: Username / Email verification (Bug 1 Fix - Simply validates username is not empty)
   const handleUsernameSubmit = (e) => {
     e.preventDefault();
     setError('');
 
-    const resolvedEmail = getResolvedEmail();
-    if (!resolvedEmail) {
+    if (!username.trim()) {
       setError('Please enter your administrator username or email.');
       return;
     }
 
-    if (!resolvedEmail.includes('@')) {
-      setError('Please enter a valid email address or the "admin" alias.');
-      return;
-    }
-
-    setStep(2);
+    setStep(2); // move to password step
   };
 
   // Step 2: Password submission with real Firebase Authentication
@@ -78,19 +72,14 @@ export default function Login() {
         // Enforce secure browser local persistence before sign in
         await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, resolvedEmail, password);
-        toast.success("Access granted: Welcome back, Gajera!");
+        toast.success("Access granted: Welcome back, Prince!");
         navigate("/admin/dashboard");
       } else {
         throw new Error("Firebase Authentication is not configured.");
       }
     } catch (err) {
       console.error("Auth login failure:", err);
-      // Human friendly Firebase Auth error messages
-      if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        setError('Access denied: Invalid administrative email or password.');
-      } else {
-        setError(err.message || 'Error occurred during administrative authentication.');
-      }
+      setError('Invalid credentials'); // Bug 4 Fix - Always show "Invalid credentials" on failure
     } finally {
       setLoading(false);
     }
@@ -115,7 +104,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Auth password reset failure:", err);
-      setError(err.message || 'Failed to dispatch recovery email. Please check your network connection.');
+      setError(err.message || 'Failed to dispatch recovery email.');
     } finally {
       setLoading(false);
     }
@@ -125,8 +114,6 @@ export default function Login() {
     <section className="relative min-h-screen flex items-center justify-center bg-dark overflow-hidden px-6">
       {/* Dynamic Purple background canvas */}
       <ParticleBackground color="#6C63FF" density={80} />
-
-      <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-md bg-surface-2 border border-white/5 p-8 rounded-3xl shadow-xl hover:shadow-[0_0_30px_rgba(108,99,255,0.05)] transition-all duration-500 font-sans">
         
@@ -160,10 +147,8 @@ export default function Login() {
                 <label htmlFor="username" className="block text-xs font-mono uppercase tracking-wider text-gray-500 select-none">
                   Username or Email
                 </label>
-                <span className="text-[10px] font-mono text-primary animate-pulse font-bold select-none">
-                  REQUIRED
-                </span>
               </div>
+              {/* Controlled component input (Bug 2 Fix - Value and onChange mapped directly to username state) */}
               <input
                 type="text"
                 id="username"
