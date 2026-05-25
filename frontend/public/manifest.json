@@ -1,0 +1,22 @@
+{
+  "short_name": "PG Portfolio",
+  "name": "Prince Gajera | Full Stack Developer Portfolio",
+  "description": "Explore Prince Gajera's interactive full-stack developer web portfolio.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512"
+    },
+    {
+      "src": "/robot.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#070714",
+  "theme_color": "#6C63FF",
+  "display": "standalone",
+  "orientation": "portrait"
+}

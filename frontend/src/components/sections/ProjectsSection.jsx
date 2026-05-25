@@ -36,16 +36,20 @@ export default function ProjectsSection() {
   useEffect(() => {
     if (loading) return;
 
-    // Stagger show projects cards on load, category filter, or page change
-    gsap.fromTo('.project-card', 
-      { opacity: 0, scale: 0.9, y: 30 },
-      { 
-        opacity: 1, scale: 1, y: 0,
-        duration: 0.6, 
-        stagger: 0.06, 
-        ease: 'back.out(1.2)'
-      }
-    );
+    const ctx = gsap.context(() => {
+      // Stagger show projects cards on load, category filter, or page change
+      gsap.fromTo('.project-card', 
+        { opacity: 0, scale: 0.9, y: 30 },
+        { 
+          opacity: 1, scale: 1, y: 0,
+          duration: 0.6, 
+          stagger: 0.06, 
+          ease: 'back.out(1.2)'
+        }
+      );
+    });
+
+    return () => ctx.revert();
   }, [loading, activeCategory, currentPage]);
 
   const categories = [

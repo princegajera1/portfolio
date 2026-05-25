@@ -10,20 +10,23 @@ export default function AboutSection() {
   const [internshipCount, setInternshipCount] = useState(2);
 
   useEffect(() => {
-    // Card animation trigger
-    gsap.fromTo('.fact-card', 
-      { opacity: 0, scale: 0.92, y: 15 },
-      { 
-        opacity: 1, scale: 1, y: 0,
-        duration: 0.6, 
-        stagger: 0.08, 
-        ease: 'back.out(1.2)',
-        scrollTrigger: {
-          trigger: '.fact-grid',
-          start: 'top 85%'
+    // Create GSAP Context for secure unmount cleanups
+    const ctx = gsap.context(() => {
+      // Card animation trigger
+      gsap.fromTo('.fact-card', 
+        { opacity: 0, scale: 0.92, y: 15 },
+        { 
+          opacity: 1, scale: 1, y: 0,
+          duration: 0.6, 
+          stagger: 0.08, 
+          ease: 'back.out(1.2)',
+          scrollTrigger: {
+            trigger: '.fact-grid',
+            start: 'top 85%'
+          }
         }
-      }
-    );
+      );
+    });
 
     // Fetch and calculate internships dynamically
     const fetchAndCalculateInternships = async () => {
@@ -58,6 +61,8 @@ export default function AboutSection() {
       }
     };
     fetchAndCalculateInternships();
+
+    return () => ctx.revert();
   }, []);
 
   const facts = [

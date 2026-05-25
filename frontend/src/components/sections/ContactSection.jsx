@@ -2,11 +2,12 @@ import { useState } from 'react';
 import ParticleBackground from '../ParticleBackground';
 import { saveMessage } from '../../firebase/messages';
 import { useScrollReveal } from '../../hooks/useGSAP';
+import { useToast } from '../../context/ToastContext';
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState({ type: null, message: '' });
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
   useScrollReveal('.scroll-reveal-contact');
 
   const handleChange = (e) => {
@@ -18,20 +19,32 @@ export default function ContactSection() {
     const { name, email, message } = formData;
 
     if (!name.trim() || !email.trim() || !message.trim()) {
-      setStatus({ type: 'error', message: 'All inputs are required. Please fill out the form.' });
+      toast.error('All inputs are required. Please fill out the form.');
+      return;
+    }
+
+    // Email regex validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+
+    // Message length verification (min 10 characters)
+    if (message.trim().length < 10) {
+      toast.error('Message must be at least 10 characters long.');
       return;
     }
 
     setLoading(true);
-    setStatus({ type: null, message: '' });
 
     try {
       await saveMessage(name, email, message);
-      setStatus({ type: 'success', message: 'Message sent successfully! Prince will reach out to you shortly.' });
+      toast.success('Message sent successfully! Prince will reach out to you shortly.');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error(error);
-      setStatus({ type: 'error', message: 'Failed to deliver message. Please try again later.' });
+      toast.error('Failed to deliver message. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -115,18 +128,6 @@ export default function ContactSection() {
 
           {/* Contact Form panel */}
           <div className="scroll-reveal-contact md:col-span-7 bg-surface-2 border border-white/5 p-6 sm:p-8 rounded-2xl relative">
-            
-            {status.type && (
-              <div 
-                className={`mb-6 p-4 rounded-xl text-xs sm:text-sm font-sans leading-relaxed border ${
-                  status.type === 'success' 
-                    ? 'bg-secondary/10 border-secondary/30 text-secondary' 
-                    : 'bg-accent/10 border-accent/30 text-accent'
-                }`}
-              >
-                {status.message}
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -142,6 +143,7 @@ export default function ContactSection() {
                     className="admin-input font-sans text-xs sm:text-sm"
                     disabled={loading}
                     required
+                    aria-required="true"
                   />
                 </div>
                 <div>
@@ -156,6 +158,7 @@ export default function ContactSection() {
                     className="admin-input font-sans text-xs sm:text-sm"
                     disabled={loading}
                     required
+                    aria-required="true"
                   />
                 </div>
               </div>
@@ -172,6 +175,7 @@ export default function ContactSection() {
                   className="admin-input font-sans text-xs sm:text-sm resize-none"
                   disabled={loading}
                   required
+                  aria-required="true"
                 />
               </div>
 

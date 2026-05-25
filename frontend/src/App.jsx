@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Cursor from './components/Cursor';
 import Loader from './components/Loader';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Public Pages
 import Home from './pages/Home';
@@ -14,6 +15,7 @@ import Skills from './pages/Skills';
 import Projects from './pages/Projects';
 import Experience from './pages/Experience';
 import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 
 // Admin Pages & Core Layout
 import AdminLayout from './admin/AdminLayout';
@@ -22,6 +24,7 @@ import Dashboard from './admin/Dashboard';
 import ManageProjects from './admin/ManageProjects';
 import ManageSkills from './admin/ManageSkills';
 import ViewMessages from './admin/ViewMessages';
+import PrivateRoute from './components/PrivateRoute';
 
 function AppContent({ darkMode, setDarkMode }) {
   const location = useLocation();
@@ -51,19 +54,21 @@ function AppContent({ darkMode, setDarkMode }) {
         <Route path="/contact" element={<Contact />} />
 
         {/* Protected Administration Nested Router */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="projects" element={<ManageProjects />} />
-          <Route path="skills" element={<ManageSkills />} />
-          <Route path="messages" element={<ViewMessages />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="projects" element={<ManageProjects />} />
+            <Route path="skills" element={<ManageSkills />} />
+            <Route path="messages" element={<ViewMessages />} />
+          </Route>
         </Route>
         
         {/* Auth Route */}
         <Route path="/admin/login" element={<Login />} />
 
         {/* Fallback Catch-all Route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {!isAdminRoute && <Footer />}
@@ -91,11 +96,13 @@ export default function App() {
 
   return (
     <Router>
-      <ToastProvider>
-        <ConfirmProvider>
-          <AppContent darkMode={darkMode} setDarkMode={setDarkMode} />
-        </ConfirmProvider>
-      </ToastProvider>
+      <ErrorBoundary>
+        <ToastProvider>
+          <ConfirmProvider>
+            <AppContent darkMode={darkMode} setDarkMode={setDarkMode} />
+          </ConfirmProvider>
+        </ToastProvider>
+      </ErrorBoundary>
     </Router>
   );
 }

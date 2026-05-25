@@ -29,37 +29,42 @@ export default function ExperienceSection() {
       ScrollTrigger.refresh();
     }, 200);
 
-    // Timeline dots scaling reveals
-    gsap.fromTo('.timeline-node', 
-      { opacity: 0, scale: 0 },
-      { 
-        opacity: 1, scale: 1, 
-        duration: 0.5, 
-        stagger: 0.08, 
-        ease: 'back.out(1.5)',
-        scrollTrigger: {
-          trigger: '.timeline-container',
-          start: 'top 85%'
+    const ctx = gsap.context(() => {
+      // Timeline dots scaling reveals
+      gsap.fromTo('.timeline-node', 
+        { opacity: 0, scale: 0 },
+        { 
+          opacity: 1, scale: 1, 
+          duration: 0.5, 
+          stagger: 0.08, 
+          ease: 'back.out(1.5)',
+          scrollTrigger: {
+            trigger: '.timeline-container',
+            start: 'top 85%'
+          }
         }
-      }
-    );
+      );
 
-    // Stagger slide timeline cards
-    gsap.fromTo('.timeline-card', 
-      { opacity: 0, x: (i) => window.innerWidth > 768 ? (i % 2 === 0 ? -30 : 30) : -20 },
-      { 
-        opacity: 1, x: 0, 
-        duration: 0.7, 
-        stagger: 0.12, 
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.timeline-container',
-          start: 'top 85%'
+      // Stagger slide timeline cards
+      gsap.fromTo('.timeline-card', 
+        { opacity: 0, x: (i) => window.innerWidth > 768 ? (i % 2 === 0 ? -30 : 30) : -20 },
+        { 
+          opacity: 1, x: 0, 
+          duration: 0.7, 
+          stagger: 0.12, 
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.timeline-container',
+            start: 'top 85%'
+          }
         }
-      }
-    );
+      );
+    });
 
-    return () => clearTimeout(refreshTimer);
+    return () => {
+      clearTimeout(refreshTimer);
+      ctx.revert();
+    };
   }, [loading]);
 
   return (

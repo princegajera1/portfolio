@@ -33,35 +33,40 @@ export default function SkillsSection() {
   useEffect(() => {
     if (loading) return;
 
-    // Trigger skills fill animation
-    gsap.fromTo('.progress-fill', 
-      { width: '0%' },
-      { 
-        width: (i, el) => el.getAttribute('data-level') + '%', 
-        duration: 1.2, 
-        ease: 'power3.out', 
-        stagger: 0.04,
-        scrollTrigger: {
-          trigger: '.skills-grid',
-          start: 'top 85%'
+    // Create GSAP Context for unmount cleanup
+    const ctx = gsap.context(() => {
+      // Trigger skills fill animation
+      gsap.fromTo('.progress-fill', 
+        { width: '0%' },
+        { 
+          width: (i, el) => el.getAttribute('data-level') + '%', 
+          duration: 1.2, 
+          ease: 'power3.out', 
+          stagger: 0.04,
+          scrollTrigger: {
+            trigger: '.skills-grid',
+            start: 'top 85%'
+          }
         }
-      }
-    );
+      );
 
-    // Stagger slide skills cards
-    gsap.fromTo('.skill-card', 
-      { opacity: 0, y: 20 },
-      { 
-        opacity: 1, y: 0, 
-        duration: 0.5, 
-        stagger: 0.04, 
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: '.skills-grid',
-          start: 'top 85%'
+      // Stagger slide skills cards
+      gsap.fromTo('.skill-card', 
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, y: 0, 
+          duration: 0.5, 
+          stagger: 0.04, 
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.skills-grid',
+            start: 'top 85%'
+          }
         }
-      }
-    );
+      );
+    });
+
+    return () => ctx.revert();
   }, [loading, activeCategory]);
 
   const categories = [

@@ -81,43 +81,47 @@ export default function HeroSection() {
       backDelay: 1800,
     });
 
-    // Animate floating background shapes
-    const shapes = document.querySelectorAll('.float-shape');
-    shapes.forEach((shape, index) => {
-      gsap.to(shape, {
-        y: `${(index % 2 === 0 ? -1 : 1) * (15 + index * 5)}px`,
-        x: `${(index % 3 === 0 ? 1 : -1) * (10 + index * 4)}px`,
-        rotate: index % 2 === 0 ? 180 : -180,
-        duration: 6 + index * 2,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true
+    // Create GSAP Context for precise local unmount cleanup
+    const ctx = gsap.context(() => {
+      // Animate floating background shapes
+      const shapes = document.querySelectorAll('.float-shape');
+      shapes.forEach((shape, index) => {
+        gsap.to(shape, {
+          y: `${(index % 2 === 0 ? -1 : 1) * (15 + index * 5)}px`,
+          x: `${(index % 3 === 0 ? 1 : -1) * (10 + index * 4)}px`,
+          rotate: index % 2 === 0 ? 180 : -180,
+          duration: 6 + index * 2,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true
+        });
       });
-    });
 
-    // Gentle float for the tagline text (no rotation)
-    gsap.to('.hero-floating-tag', {
-      y: -12,
-      duration: 4,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1
-    });
+      // Gentle float for the tagline text
+      gsap.to('.hero-floating-tag', {
+        y: -12,
+        duration: 4,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1
+      });
 
-    // Smooth Infinite Floating & Breathing Animation for the tilted 3D Robot Card (3-5deg range)
-    gsap.set('.hero-robot-container', { rotation: '4deg' });
-    gsap.to('.hero-robot-container', {
-      y: '-25px',
-      rotation: '2.5deg',
-      scale: 1.02,
-      duration: 4.5,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1
+      // Smooth Infinite Floating & Breathing Animation for the tilted 3D Robot Card (3-5deg range)
+      gsap.set('.hero-robot-container', { rotation: '4deg' });
+      gsap.to('.hero-robot-container', {
+        y: '-25px',
+        rotation: '2.5deg',
+        scale: 1.02,
+        duration: 4.5,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1
+      });
     });
 
     return () => {
       typed.destroy();
+      ctx.revert(); // Securely reverts all GSAP animations and kills timelines
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('projectsUpdated', handleStorageChange);
     };
@@ -144,7 +148,7 @@ export default function HeroSection() {
         
         {/* Left Side Column - Narrative & Typography */}
         <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-          <div className="hero-tagline font-mono text-xs sm:text-sm text-secondary tracking-widest uppercase mb-1 flex items-center gap-2.5">
+          <div className="hero-tagline hero-floating-tag font-mono text-xs sm:text-sm text-secondary tracking-widest uppercase mb-1 flex items-center gap-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse shadow-[0_0_8px_#00e5ff] flex-shrink-0" />
             &lt; Hello, World! /&gt; — I'm
           </div>
@@ -234,8 +238,9 @@ export default function HeroSection() {
           <div className="hero-robot-container relative z-10 w-64 sm:w-80 md:w-96 lg:w-full max-w-[360px] aspect-[3/4] p-3 rounded-[32px] border-2 border-primary/20 bg-surface-2/40 shadow-[0_0_30px_rgba(108,99,255,0.18),_0_0_60px_rgba(0,212,255,0.12)] backdrop-blur-sm">
             <img 
               src="/robot.png" 
-              alt="Prince's 3D Robot Avatar"
+              alt="Prince Gajera's Interactive 3D Robot Avatar representing technology and generative AI"
               className="w-full h-full object-contain rounded-2xl filter drop-shadow-[0_10px_30px_rgba(0,212,255,0.15)]"
+              loading="lazy"
             />
             
             {/* Secret Admin Portal Easter Egg (Clickable Eyes - Invisible Link) */}
