@@ -7,8 +7,20 @@ import { useConfirm } from '../context/ConfirmContext';
 import { useToast } from '../context/ToastContext';
 
 export default function AdminLayout() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    const mockSession = localStorage.getItem("mock_admin_logged");
+    if (mockSession === "true") {
+      return { email: "princegajera944@gmail.com", displayName: "Prince Gajera" };
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    const mockSession = localStorage.getItem("mock_admin_logged");
+    if (mockSession === "true") {
+      return false;
+    }
+    return true;
+  });
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
