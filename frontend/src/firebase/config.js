@@ -5,19 +5,20 @@ import { getStorage } from 'firebase/storage';
 
 // Replace these placeholders with your actual Firebase project settings
 const firebaseConfig = {
-  apiKey: "PLACEHOLDER_API_KEY",
-  authDomain: "prince-portfolio.firebaseapp.com",
-  projectId: "prince-portfolio",
-  storageBucket: "prince-portfolio.appspot.com",
-  messagingSenderId: "PLACEHOLDER_SENDER_ID",
-  appId: "PLACEHOLDER_APP_ID",
-  measurementId: "PLACEHOLDER_MEASUREMENT_ID"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "PLACEHOLDER_API_KEY",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "prince-portfolio-155bf.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "prince-portfolio-155bf",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "prince-portfolio-155bf.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "PLACEHOLDER_SENDER_ID",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "PLACEHOLDER_APP_ID",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "PLACEHOLDER_MEASUREMENT_ID"
 };
 
 // Check if configuration has been filled out or if it's default/placeholders
 export const isFirebaseConfigured = 
   firebaseConfig.apiKey && 
   !firebaseConfig.apiKey.startsWith("PLACEHOLDER_");
+
 
 let app;
 let db = null;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db, isFirebaseConfigured, storage } from '../firebase/config';
+import { db, isFirebaseConfigured, storage, auth } from '../firebase/config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, doc, onSnapshot, getDoc, setDoc } from 'firebase/firestore';
 import { getProjects } from '../firebase/projects';
@@ -72,7 +72,7 @@ export default function Dashboard() {
     let unsubMessages = () => {};
     let unsubResume = () => {};
 
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       // 1. Projects listener
       unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
         setStats((prev) => ({ ...prev, projects: snapshot.size }));

@@ -292,16 +292,18 @@ export const getProjects = async (category = null, includeDeleted = false) => {
   }
 
   try {
-    let q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    let projectsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // In-memory filtering to bypass composite index requirement
     if (!includeDeleted) {
-      q = query(q, where('deleted', '!=', true));
+      projectsList = projectsList.filter(p => !p.deleted);
     }
     if (category && category !== 'all') {
-      q = query(q, where('category', '==', category));
+      projectsList = projectsList.filter(p => p.category === category);
     }
-    const snapshot = await getDocs(q);
-    const projectsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
+
     // If database is empty, fall back to seeds
     if (projectsList.length === 0) {
       return initialProjectsSeed;

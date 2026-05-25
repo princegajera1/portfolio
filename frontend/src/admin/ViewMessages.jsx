@@ -5,7 +5,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import SlidePanel from '../components/SlidePanel';
 import EmptyState from '../components/EmptyState';
 import SkeletonCard from '../components/SkeletonCard';
-import { db, isFirebaseConfigured } from '../firebase/config';
+import { db, isFirebaseConfigured, auth } from '../firebase/config';
 import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function ViewMessages() {
@@ -20,7 +20,7 @@ export default function ViewMessages() {
   useEffect(() => {
     let unsubSnapshot = () => {};
 
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       setLoading(true);
       unsubSnapshot = onSnapshot(collection(db, 'messages'), (snapshot) => {
         const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

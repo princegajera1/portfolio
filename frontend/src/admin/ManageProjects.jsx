@@ -8,7 +8,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import SlidePanel from '../components/SlidePanel';
 import EmptyState from '../components/EmptyState';
 import SkeletonCard from '../components/SkeletonCard';
-import { db, isFirebaseConfigured } from '../firebase/config';
+import { db, isFirebaseConfigured, auth } from '../firebase/config';
 import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function ManageProjects() {
@@ -50,7 +50,7 @@ export default function ManageProjects() {
 
   // Instant local state update for localStorage mode
   const refreshProjects = () => {
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       // Handled automatically in real-time by Firebase onSnapshot
     } else {
       const local = JSON.parse(localStorage.getItem('prince_projects') || '[]');
@@ -64,7 +64,7 @@ export default function ManageProjects() {
   useEffect(() => {
     let unsubProjects = () => {};
 
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       setLoading(true);
       unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

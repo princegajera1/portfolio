@@ -8,7 +8,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import SlidePanel from '../components/SlidePanel';
 import EmptyState from '../components/EmptyState';
 import SkeletonCard from '../components/SkeletonCard';
-import { db, isFirebaseConfigured } from '../firebase/config';
+import { db, isFirebaseConfigured, auth } from '../firebase/config';
 import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function ManageSkills() {
@@ -33,7 +33,7 @@ export default function ManageSkills() {
 
   // Instant local updates for LocalStorage mode
   const refreshSkills = () => {
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       // Firebase real-time onSnapshot will update automatically
     } else {
       const local = JSON.parse(localStorage.getItem('prince_skills') || '[]');
@@ -47,7 +47,7 @@ export default function ManageSkills() {
   useEffect(() => {
     let unsubSkills = () => {};
 
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       setLoading(true);
       unsubSkills = onSnapshot(collection(db, 'skills'), (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

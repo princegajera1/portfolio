@@ -21,22 +21,21 @@ export default function AdminLayout() {
     if (mockSession === "true") {
       setUser({ email: "princegajera944@gmail.com", displayName: "Prince Gajera" });
       setLoading(false);
-    } else {
-      // If Firebase is not configured and no mock session, log out
-      if (!isFirebaseConfigured || !auth) {
-        setUser(null);
-        setLoading(false);
-      }
+      return; // Skip setting up the Firebase Auth listener if logged in via mock session
+    }
+
+    // If Firebase is not configured and no mock session, log out
+    if (!isFirebaseConfigured || !auth) {
+      setUser(null);
+      setLoading(false);
+      return;
     }
 
     // Live Firebase Auth listener as fallback
-    let unsubscribe = () => {};
-    if (isFirebaseConfigured && auth) {
-      unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-        setLoading(false);
-      });
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
 
     return () => unsubscribe();
   }, [location.pathname]);
@@ -45,7 +44,7 @@ export default function AdminLayout() {
   useEffect(() => {
     let unsubSnapshot = () => {};
 
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && auth?.currentUser) {
       unsubSnapshot = onSnapshot(collection(db, 'messages'), (snapshot) => {
         const msgs = snapshot.docs.map(doc => doc.data());
         const unread = msgs.filter(m => !m.read).length;
