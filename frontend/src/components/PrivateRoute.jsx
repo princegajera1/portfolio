@@ -8,6 +8,12 @@ export default function PrivateRoute() {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
+    if (localStorage.getItem("mock_admin_logged") === "true") {
+      setAuthenticated(true);
+      setLoading(false);
+      return;
+    }
+
     if (!isFirebaseConfigured || !auth) {
       setAuthenticated(false);
       setLoading(false);

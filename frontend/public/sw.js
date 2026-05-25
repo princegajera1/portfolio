@@ -35,8 +35,13 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event - network-first fallback pattern to ensure freshness
 self.addEventListener('fetch', (event) => {
-  // Avoid intercepting non-GET requests or Firebase Firestore/Auth API endpoints
-  if (event.request.method !== 'GET' || event.request.url.includes('firestore.googleapis.com') || event.request.url.includes('identitytoolkit.googleapis.com')) {
+  // Avoid intercepting non-GET requests, non-HTTP/HTTPS URLs, or Firebase Firestore/Auth API endpoints
+  if (
+    event.request.method !== 'GET' ||
+    !event.request.url.startsWith('http') ||
+    event.request.url.includes('firestore.googleapis.com') ||
+    event.request.url.includes('identitytoolkit.googleapis.com')
+  ) {
     return;
   }
 

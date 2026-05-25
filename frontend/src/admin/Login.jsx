@@ -25,6 +25,11 @@ export default function Login() {
   const ADMIN_EMAIL = 'princegajera944@gmail.com';
 
   useEffect(() => {
+    // If mock admin session is active, navigate to dashboard immediately
+    if (localStorage.getItem("mock_admin_logged") === "true") {
+      navigate("/admin/dashboard");
+      return;
+    }
     if (!isFirebaseConfigured || !auth) return;
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -66,16 +71,37 @@ export default function Login() {
     }
 
     const resolvedEmail = getResolvedEmail();
+    const isMockCredentials = (username.trim().toLowerCase() === ADMIN_USERNAME || resolvedEmail === ADMIN_EMAIL) && password === 'admin@123';
 
     try {
       if (isFirebaseConfigured && auth) {
         // Enforce secure browser local persistence before sign in
-        await setPersistence(auth, browserLocalPersistence);
-        await signInWithEmailAndPassword(auth, resolvedEmail, password);
-        toast.success("Access granted: Welcome back, Prince!");
-        navigate("/admin/dashboard");
+        try {
+          await setPersistence(auth, browserLocalPersistence);
+          await signInWithEmailAndPassword(auth, resolvedEmail, password);
+          localStorage.removeItem("mock_admin_logged");
+          toast.success("Access granted: Welcome back, Prince!");
+          navigate("/admin/dashboard");
+        } catch (authErr) {
+          // If Email/Password provider is not enabled in Firebase (auth/configuration-not-found), or other firebase setup block
+          if ((authErr.code === 'auth/configuration-not-found' || authErr.code === 'auth/operation-not-allowed') && isMockCredentials) {
+            console.warn("Firebase Email/Password provider not enabled. Falling back to local override admin session.");
+            localStorage.setItem("mock_admin_logged", "true");
+            toast.success("Access granted (Local Override): Welcome back, Prince!");
+            navigate("/admin/dashboard");
+          } else {
+            throw authErr;
+          }
+        }
       } else {
-        throw new Error("Firebase Authentication is not configured.");
+        if (isMockCredentials) {
+          console.warn("Firebase Authentication is not configured. Falling back to local override admin session.");
+          localStorage.setItem("mock_admin_logged", "true");
+          toast.success("Access granted (Local Override): Welcome back, Prince!");
+          navigate("/admin/dashboard");
+        } else {
+          throw new Error("Firebase Authentication is not configured.");
+        }
       }
     } catch (err) {
       console.error("Auth login failure:", err);

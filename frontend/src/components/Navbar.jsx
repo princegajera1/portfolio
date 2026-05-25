@@ -180,12 +180,12 @@ export default function Navbar({ darkMode, setDarkMode }) {
 
       {/* Mobile Menu Overlay Drawer */}
       <div 
-        className={`fixed inset-y-0 right-0 w-[260px] z-[99] bg-[#060613] border-l border-[#00f5ff]/20 backdrop-blur-xl flex flex-col p-8 transition-transform duration-500 ease-out md:hidden ${
+        className={`fixed inset-y-0 right-0 w-[260px] z-[99] bg-[#0a0a1a] border-l border-[#00f5ff]/20 shadow-[-10px_0_30px_rgba(0,229,255,0.12)] flex flex-col p-8 transition-transform duration-500 ease-out md:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full justify-between pt-16">
-          <ul className="flex flex-col gap-6 text-xs font-mono">
+          <ul className="flex flex-col gap-6 text-sm font-mono">
             {navLinks.map((link) => (
               <li key={link.name}>
                 <a

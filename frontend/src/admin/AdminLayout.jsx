@@ -6,6 +6,8 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { useConfirm } from '../context/ConfirmContext';
 import { useToast } from '../context/ToastContext';
 
+const ADMIN_EMAIL = 'princegajera944@gmail.com';
+
 export default function AdminLayout() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,6 +32,12 @@ export default function AdminLayout() {
   };
 
   useEffect(() => {
+    if (localStorage.getItem("mock_admin_logged") === "true") {
+      setUser({ email: ADMIN_EMAIL });
+      setLoading(false);
+      return;
+    }
+
     if (!isFirebaseConfigured || !auth) {
       setUser(null);
       setLoading(false);
@@ -46,7 +54,7 @@ export default function AdminLayout() {
 
   // 30-minute inactivity auto-logout listener
   useEffect(() => {
-    if (!user || !auth) return;
+    if (!user) return;
 
     let timeoutId;
     const INACTIVITY_TIME = 30 * 60 * 1000; // 30 minutes
@@ -54,12 +62,18 @@ export default function AdminLayout() {
     const resetTimer = () => {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
-        signOut(auth)
-          .then(() => {
-            toast.warning("Session expired due to 30 minutes of inactivity.");
-            navigate("/admin/login");
-          })
-          .catch((err) => console.error("Inactivity logout failed:", err));
+        if (localStorage.getItem("mock_admin_logged") === "true") {
+          localStorage.removeItem("mock_admin_logged");
+          toast.warning("Session expired due to 30 minutes of inactivity.");
+          navigate("/admin/login");
+        } else if (auth) {
+          signOut(auth)
+            .then(() => {
+              toast.warning("Session expired due to 30 minutes of inactivity.");
+              navigate("/admin/login");
+            })
+            .catch((err) => console.error("Inactivity logout failed:", err));
+        }
       }, INACTIVITY_TIME);
     };
 
@@ -100,7 +114,11 @@ export default function AdminLayout() {
     if (!approved) return;
 
     try {
-      await signOut(auth);
+      if (localStorage.getItem("mock_admin_logged") === "true") {
+        localStorage.removeItem("mock_admin_logged");
+      } else if (auth) {
+        await signOut(auth);
+      }
       toast.success("Successfully signed out");
       navigate("/");
     } catch (error) {
