@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { db, isFirebaseConfigured, storage, auth } from '../firebase/config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { collection, doc, onSnapshot, getDoc, setDoc } from 'firebase/firestore';
@@ -14,6 +14,7 @@ export default function Dashboard() {
   const toast = useToast();
   const confirm = useConfirm();
   const navigate = useNavigate();
+  const { user } = useOutletContext();
 
   const [stats, setStats] = useState({ projects: 0, messages: 0, skills: 0, experience: 0 });
   const [unreadCount, setUnreadCount] = useState(0);
@@ -72,7 +73,7 @@ export default function Dashboard() {
     let unsubMessages = () => {};
     let unsubResume = () => {};
 
-    if (isFirebaseConfigured && db && auth?.currentUser) {
+    if (isFirebaseConfigured && db && user) {
       // 1. Projects listener
       unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
         setStats((prev) => ({ ...prev, projects: snapshot.size }));
@@ -177,7 +178,7 @@ export default function Dashboard() {
       unsubMessages();
       unsubResume();
     };
-  }, []);
+  }, [user]);
 
   // File uploading & drag over handlers
   const handleFileChange = (e) => {

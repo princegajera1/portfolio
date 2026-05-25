@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { 
   getSkills, addSkill, updateSkill, 
   deleteSkill, restoreSkill, permanentlyDeleteSkill, initialSkillsSeed 
@@ -14,6 +15,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 export default function ManageSkills() {
   const toast = useToast();
   const confirm = useConfirm();
+  const { user } = useOutletContext();
 
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ export default function ManageSkills() {
 
   // Instant local updates for LocalStorage mode
   const refreshSkills = () => {
-    if (isFirebaseConfigured && db && auth?.currentUser) {
+    if (isFirebaseConfigured && db && user) {
       // Firebase real-time onSnapshot will update automatically
     } else {
       const local = JSON.parse(localStorage.getItem('prince_skills') || '[]');
@@ -47,7 +49,7 @@ export default function ManageSkills() {
   useEffect(() => {
     let unsubSkills = () => {};
 
-    if (isFirebaseConfigured && db && auth?.currentUser) {
+    if (isFirebaseConfigured && db && user) {
       setLoading(true);
       unsubSkills = onSnapshot(collection(db, 'skills'), (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -66,7 +68,7 @@ export default function ManageSkills() {
     }
 
     return () => unsubSkills();
-  }, []);
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

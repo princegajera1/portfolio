@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { getMessages, deleteMessage, markAsRead } from '../firebase/messages';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
@@ -11,6 +12,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 export default function ViewMessages() {
   const toast = useToast();
   const confirm = useConfirm();
+  const { user } = useOutletContext();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +22,7 @@ export default function ViewMessages() {
   useEffect(() => {
     let unsubSnapshot = () => {};
 
-    if (isFirebaseConfigured && db && auth?.currentUser) {
+    if (isFirebaseConfigured && db && user) {
       setLoading(true);
       unsubSnapshot = onSnapshot(collection(db, 'messages'), (snapshot) => {
         const msgs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -47,7 +49,7 @@ export default function ViewMessages() {
     }
 
     return () => unsubSnapshot();
-  }, []);
+  }, [user]);
 
   const handleOpenDetail = async (msg) => {
     setSelectedMessage(msg);

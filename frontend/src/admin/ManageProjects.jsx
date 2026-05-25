@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { 
   getProjects, addProject, updateProject, 
   deleteProject, restoreProject, permanentlyDeleteProject, initialProjectsSeed 
@@ -14,6 +15,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 export default function ManageProjects() {
   const toast = useToast();
   const confirm = useConfirm();
+  const { user } = useOutletContext();
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export default function ManageProjects() {
 
   // Instant local state update for localStorage mode
   const refreshProjects = () => {
-    if (isFirebaseConfigured && db && auth?.currentUser) {
+    if (isFirebaseConfigured && db && user) {
       // Handled automatically in real-time by Firebase onSnapshot
     } else {
       const local = JSON.parse(localStorage.getItem('prince_projects') || '[]');
@@ -64,7 +66,7 @@ export default function ManageProjects() {
   useEffect(() => {
     let unsubProjects = () => {};
 
-    if (isFirebaseConfigured && db && auth?.currentUser) {
+    if (isFirebaseConfigured && db && user) {
       setLoading(true);
       unsubProjects = onSnapshot(collection(db, 'projects'), (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -83,7 +85,7 @@ export default function ManageProjects() {
     }
 
     return () => unsubProjects();
-  }, []);
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
