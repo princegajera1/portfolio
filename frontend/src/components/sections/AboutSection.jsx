@@ -9,6 +9,16 @@ export default function AboutSection() {
   const [internshipMonths, setInternshipMonths] = useState(2);
   const [internshipCount, setInternshipCount] = useState(2);
 
+  // Dynamic Coding Experience Auto-calculation (Starts from September 2023)
+  const getCodingExp = () => {
+    const start = new Date('2023-09-01');
+    const now = new Date();
+    const diffTime = Math.abs(now - start);
+    const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+    return `${Math.floor(diffYears)}+ Yrs`;
+  };
+
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.fact-card', 
