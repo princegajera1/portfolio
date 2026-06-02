@@ -63,11 +63,19 @@ export default function Navbar() {
     { name: 'Skills', path: 'skills' },
     { name: 'Projects', path: 'projects' },
     { name: 'Experience', path: 'experience' },
+    { name: 'Blog', path: 'blog', isRoute: true },
     { name: 'Contact', path: 'contact' },
   ];
 
-  const handleLinkClick = (e, path) => {
+  const handleLinkClick = (e, link) => {
     setIsOpen(false);
+    if (link.isRoute) {
+      e.preventDefault();
+      navigate(`/${link.path}`);
+      return;
+    }
+
+    const path = link.path;
     if (location.pathname === '/') {
       e.preventDefault();
       const el = document.getElementById(path);
@@ -84,9 +92,12 @@ export default function Navbar() {
     }
   };
 
-  const isLinkActive = (path) => {
+  const isLinkActive = (link) => {
+    if (link.isRoute) {
+      return location.pathname.startsWith(`/${link.path}`);
+    }
     if (location.pathname === '/') {
-      return activeSection === path;
+      return activeSection === link.path;
     }
     return false;
   };
@@ -112,7 +123,7 @@ export default function Navbar() {
         {/* Brand Logo */}
         <Link 
           to="/" 
-          onClick={(e) => handleLinkClick(e, 'home')}
+          onClick={(e) => handleLinkClick(e, { name: 'Home', path: 'home' })}
           className="text-xl sm:text-2xl font-extrabold font-display text-white tracking-wider flex items-center gap-3 group select-none"
         >
           <div className="relative flex items-center justify-center w-10 h-10 transition-transform duration-300 group-hover:scale-105">
@@ -147,14 +158,14 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <li key={link.name}>
                 <a
-                  href={`#${link.path}`}
-                  onClick={(e) => handleLinkClick(e, link.path)}
+                  href={link.isRoute ? `/${link.path}` : `#${link.path}`}
+                  onClick={(e) => handleLinkClick(e, link)}
                   className={`relative py-2 uppercase transition-colors duration-300 hover:text-white ${
-                    isLinkActive(link.path) ? 'text-secondary font-bold' : 'text-gray-400'
+                    isLinkActive(link) ? 'text-secondary font-bold' : 'text-gray-400'
                   }`}
                 >
                   {link.name}
-                  {isLinkActive(link.path) && (
+                  {isLinkActive(link) && (
                     <span className="absolute bottom-0 left-0 w-full h-[2px] bg-secondary rounded-full shadow-[0_0_8px_#00e5ff]" />
                   )}
                 </a>
@@ -211,10 +222,10 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <li key={link.name}>
                 <a
-                  href={`#${link.path}`}
-                  onClick={(e) => handleLinkClick(e, link.path)}
+                  href={link.isRoute ? `/${link.path}` : `#${link.path}`}
+                  onClick={(e) => handleLinkClick(e, link)}
                   className={`block py-2 ${
-                    isLinkActive(link.path) ? 'text-secondary font-black' : 'text-gray-400'
+                    isLinkActive(link) ? 'text-secondary font-black' : 'text-gray-400'
                   }`}
                 >
                   {link.name}

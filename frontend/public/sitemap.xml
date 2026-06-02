@@ -31,6 +31,72 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://princegajera.vercel.app/blog</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/react-state-management-performance</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/java-enterprise-scaffolding-maven</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/python-generative-ai-automation</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/firebase-serverless-cloud-databases</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/modern-web-development-best-practices</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/how-to-build-99th-percentile-portfolio</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/gsap-interactive-web-animations</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/technical-seo-web-engineers</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/vite-fast-bundling-deployment</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://princegajera.vercel.app/blog/future-software-development-india</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://princegajera.vercel.app/contact</loc>
     <lastmod>2026-06-02</lastmod>
     <changefreq>yearly</changefreq>
