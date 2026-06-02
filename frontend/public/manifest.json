@@ -1,7 +1,7 @@
 {
-  "short_name": "PG Portfolio",
-  "name": "Prince Gajera | Full Stack Developer Portfolio",
-  "description": "Explore Prince Gajera's interactive full-stack developer web portfolio.",
+  "short_name": "PG Dev Portfolio",
+  "name": "Prince Gajera | Full Stack Developer & React Specialist",
+  "description": "Explore Prince Gajera's portfolio of high-performance React applications, scalable databases, and custom animations.",
   "icons": [
     {
       "src": "/favicon.svg",
@@ -15,8 +15,8 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#070714",
-  "theme_color": "#6C63FF",
+  "background_color": "#06060f",
+  "theme_color": "#7c6fff",
   "display": "standalone",
   "orientation": "portrait"
 }

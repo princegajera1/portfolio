@@ -21,9 +21,9 @@ export default {
         muted: '#6b6a8a'
       },
       fontFamily: {
-        sans: ['"DM Sans"', 'Poppins', 'sans-serif'],
+        sans: ['Inter', '"DM Sans"', 'Poppins', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
-        display: ['Syne', 'sans-serif'],
+        display: ['Outfit', 'Syne', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

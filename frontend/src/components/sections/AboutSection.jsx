@@ -10,16 +10,14 @@ export default function AboutSection() {
   const [internshipCount, setInternshipCount] = useState(2);
 
   useEffect(() => {
-    // Create GSAP Context for secure unmount cleanups
     const ctx = gsap.context(() => {
-      // Card animation trigger
       gsap.fromTo('.fact-card', 
-        { opacity: 0, scale: 0.92, y: 15 },
+        { opacity: 0, scale: 0.95, y: 15 },
         { 
           opacity: 1, scale: 1, y: 0,
           duration: 0.6, 
           stagger: 0.08, 
-          ease: 'back.out(1.2)',
+          ease: 'back.out(1.1)',
           scrollTrigger: {
             trigger: '.fact-grid',
             start: 'top 85%'
@@ -28,7 +26,6 @@ export default function AboutSection() {
       );
     });
 
-    // Fetch and calculate internships dynamically
     const fetchAndCalculateInternships = async () => {
       try {
         const data = await getExperience();
@@ -49,7 +46,7 @@ export default function AboutSection() {
               const ongoing = Math.max(1, diff);
               totalMonths += ongoing;
             } else if (e.company.includes('Prodigy')) {
-              totalMonths += 1; // 1 month for completed Generative AI Internship
+              totalMonths += 1;
             } else {
               totalMonths += 1;
             }
@@ -66,15 +63,14 @@ export default function AboutSection() {
   }, []);
 
   const facts = [
-    { title: "Design Mind", text: "Obsessed with perfect alignments and layout spacing. Making interfaces gorgeous isn't optional." },
-    { title: "Under the Hood", text: "React states and database querying speed matter. High-fidelity visuals need solid execution." },
-    { title: "Daily Pain Points", text: "Fighting CORS errors, debugging async race conditions, and styling HTML forms on Safari mobile." },
-    { title: "Caffeine Loop", text: "Turn coffee and custom terminal scripts into responsive, scalable full-stack applications." }
+    { title: "Technical Architecture", text: "Obsessed with clean code directories, strict TypeScript typing, sub-second API roundtrips, and modular file systems." },
+    { title: "Visual Standards", text: "Striving for 100% responsiveness, harmonious color palettes, fluid visual timelines, and zero layout shifts (CLS)." },
+    { title: "Performance Metrics", text: "Actively auditing files, optimizing asset payloads, using tree-shaking, and achieving green 95+ scores on Lighthouse diagnostics." },
+    { title: "Engineering Mindset", text: "Turning developer pain points (like CORS bugs and complex async states) into robust reusable software components." }
   ];
 
   return (
-    <section id="about" className="relative bg-dark overflow-hidden pt-16 pb-6 sm:pt-20 sm:pb-8 px-6">
-      {/* Dynamic Cyan Particle background field */}
+    <section id="about" className="relative bg-dark overflow-hidden pt-20 pb-10 px-6">
       <ParticleBackground color="#00D4FF" density={90} />
       
       <div className="absolute top-1/4 right-[10%] w-96 h-96 bg-secondary/5 rounded-full blur-[120px] pointer-events-none" />
@@ -83,41 +79,39 @@ export default function AboutSection() {
         
         {/* Section Header */}
         <div className="scroll-reveal-about mb-12 text-center md:text-left select-none">
-          <span className="font-mono text-xs sm:text-sm text-secondary block mb-2">// about.me</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">About Me</h2>
+          <span className="font-mono text-xs text-secondary block mb-2">// core.profile</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white pb-1">Professional Story</h2>
         </div>
 
-        {/* Narratives Layout */}
+        {/* Narrative & Graphic Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start mb-20">
           
-          {/* Mockup Terminal Graphic */}
+          {/* Interactive JSON Terminal Graphic */}
           <div className="scroll-reveal-about md:col-span-4 flex justify-center">
-            <div className="relative w-64 h-64 sm:w-76 sm:h-76 group">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary via-accent to-secondary animate-spin-slow opacity-60 blur-md" />
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-primary via-accent to-secondary animate-spin-slow" />
+            <div className="relative w-64 h-64 sm:w-76 sm:h-76 group select-none">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary via-accent to-secondary animate-spin-slow opacity-20 blur-md" />
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-primary via-accent to-secondary animate-spin-slow opacity-30" />
               
-              <div className="absolute inset-1 rounded-xl bg-surface-2 overflow-hidden flex flex-col p-4 border border-white/10 select-none">
-                <div className="flex items-center gap-2 border-b border-white/5 pb-3 mb-4">
+              <div className="absolute inset-[1px] rounded-2xl bg-[#0d0d1a] overflow-hidden flex flex-col p-4 border border-white/5">
+                <div className="flex items-center gap-1.5 border-b border-white/5 pb-3 mb-4">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-                  <span className="text-[9px] text-gray-500 font-mono ml-2">prince.sh</span>
+                  <span className="text-[9px] text-gray-500 font-mono ml-2">prince.json</span>
                 </div>
-                <div className="flex-1 flex flex-col justify-center items-center text-center font-mono text-xs sm:text-sm leading-relaxed">
-                  <p className="text-primary font-bold mb-2">&gt; cat developer.json</p>
-                  <pre className="text-left text-[9px] sm:text-[10px] text-gray-400">
+                <div className="flex-1 flex flex-col justify-center items-center text-left font-mono text-[9px] sm:text-[10px] leading-relaxed text-gray-400">
+                  <pre className="w-full">
 {`{
   "name": "Prince Gajera",
-  "role": "Full Stack Dev",
-  "college": "SAL Engineering & Tech (GTU)",
-  "year": "3rd Year B.E.",
-  "location": "Ahmedabad, Gujarat",
-  "status": "Available for hire",
+  "role": "Full Stack Engineer",
+  "degree": "B.E. Computer Engg",
+  "college": "SAL Institute (GTU)",
+  "location": "Ahmedabad, India",
+  "experience": "${getCodingExp()}",
   "internships": ${internshipCount},
-  "coffee": "Infinite",
-  "editor": "VS Code",
-  "github": "princegajera1",
-  "email": "princegajera944@gmail.com"
+  "status": "Ready for hire",
+  "authMethod": "Firebase Serverless",
+  "skills": ["React", "Java", "Python"]
 }`}
                   </pre>
                 </div>
@@ -125,54 +119,53 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Narrative Content */}
-          <div className="scroll-reveal-about md:col-span-8 space-y-6 text-gray-400 text-xs sm:text-sm md:text-base leading-relaxed">
+          {/* Recruiter Optimized Biography */}
+          <div className="scroll-reveal-about md:col-span-8 space-y-6 text-gray-400 text-xs sm:text-sm md:text-base leading-relaxed font-sans">
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white font-display">
-              I build high-end web applications that are responsive, performant, and interactive.
+              A computer engineering student combining deep database execution with absolute visual layout precision.
             </h3>
             
             <p>
-              I am Gajera Prince Shaileshbhai, a Full Stack Developer & Software Development Intern based in Ahmedabad, Gujarat. Currently pursuing my B.E. in Computer Engineering (2023 - Present) at SAL Engineering and Technical Institute, I have a deep passion for building polished full-stack systems.
+              I am **Gajera Prince Shaileshbhai**, a technical software engineer and developer intern located in Ahmedabad, Gujarat. Currently completing my third year of **B.E. in Computer Engineering (2023 - Present)** at SAL Engineering and Technical Institute, I spend my days writing clean code, building responsive interfaces, and resolving complex full-stack issues.
             </p>
             
             <p>
-              My professional journey includes designing commercial tyreshop ledgers like Chandrakant Traders, high-fidelity e-commerce sites like Ruiz Diamonds, and robust serverless databases using React and Firebase. I focus on sub-second load times, clean code, and intuitive UX design.
+              My professional background highlights include building specialized billing databases (such as the enterprise tire inventory application for **Chandrakant Traders**), premium shopping platforms (**Ruiz Diamonds**), and advanced AI contextual chatbots. I leverage modern tools like React, Vite, and Google Firebase to construct secure, scalable serverless solutions.
             </p>
 
-            {/* Quick Stat Badges */}
-            <div className="flex flex-wrap gap-3 pt-2 pb-4 select-none justify-center md:justify-start">
+            {/* Badges row */}
+            <div className="flex flex-wrap gap-2.5 pt-2 pb-4 select-none justify-center md:justify-start">
               {[
-                '🎓 B.E. Computer Engg', 
-                `💼 ${internshipMonths} Mos Internships`, 
-                '📍 Ahmedabad, India'
+                '🎓 B.E. Computer Engineering', 
+                `💼 ${internshipMonths} Months Internships`, 
+                '📍 Ahmedabad, Gujarat, India'
               ].map((badge, idx) => (
-                <span key={idx} className="px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold bg-secondary/10 border border-secondary/20 text-secondary shadow-[0_0_10px_rgba(0,212,255,0.05)]">
+                <span key={idx} className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-secondary/5 border border-secondary/15 text-secondary shadow-[0_0_10px_rgba(0,229,255,0.02)]">
                   {badge}
                 </span>
               ))}
             </div>
 
-            {/* Cyan-bordered Quote block */}
-            <blockquote className="border-l-4 border-secondary pl-6 text-sm sm:text-base font-mono text-gray-300 italic py-2 my-8 select-text text-left">
-              "Yes, I write tests. Yes, I clean up console.logs before pushing to production. No, I do not believe Tailwind utility strings are too long if structured cleanly."
+            <blockquote className="border-l-2 border-secondary pl-6 text-sm font-mono text-gray-300 italic py-2 my-6 select-text text-left">
+              "My mission is to engineer high-fidelity, high-performance web products that deliver real commercial business value. I write clean code, study sitemap indexing, and build products that load in milliseconds."
             </blockquote>
           </div>
         </div>
 
         {/* Fact Matrix */}
-        <div className="scroll-reveal-about mb-6">
-          <p className="text-accent font-mono text-xs uppercase tracking-[0.25em] mb-4 text-center md:text-left select-none">&lt; Philosophies & Dev Pain Points /&gt;</p>
-          <div className="fact-grid grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div className="scroll-reveal-about mb-6 font-sans">
+          <p className="text-secondary font-mono text-xs uppercase tracking-[0.25em] mb-6 text-center md:text-left select-none">&lt; Engineering Standards & Principles /&gt;</p>
+          <div className="fact-grid grid grid-cols-1 sm:grid-cols-2 gap-6">
             {facts.map((fact, index) => (
               <div 
                 key={index} 
-                className="fact-card bg-surface-2/60 border border-white/5 p-6 sm:p-8 rounded-[24px] hover:border-secondary/40 transition-all duration-300 hover:shadow-xl hover:shadow-secondary/5 min-h-[160px] flex flex-col justify-center gap-2.5"
+                className="fact-card bg-[#13132a]/30 border border-white/5 p-6 sm:p-8 rounded-2xl hover:border-[#7c6fff]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#7c6fff]/2 min-h-[140px] flex flex-col justify-center gap-2"
               >
-                <h4 className="text-white font-display font-bold text-sm sm:text-base md:text-lg flex items-center gap-2.5 select-none">
-                  <span className="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_10px_#00D4FF]" />
+                <h4 className="text-white font-display font-bold text-sm sm:text-base flex items-center gap-2.5 select-none">
+                  <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#00e5ff]" />
                   {fact.title}
                 </h4>
-                <p className="text-xs sm:text-sm text-gray-400 leading-relaxed font-sans">{fact.text}</p>
+                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed font-sans">{fact.text}</p>
               </div>
             ))}
           </div>
