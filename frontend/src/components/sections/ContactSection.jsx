@@ -15,37 +15,41 @@ emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors]     = useState({});
+  const [loading, setLoading]   = useState(false);
+  const [btnState, setBtnState] = useState('idle'); // idle | loading | success
   const toast = useToast();
   useScrollReveal('.scroll-reveal-contact');
 
+  const validate = () => {
+    const errs = {};
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.name.trim())                    errs.name    = 'Name is required';
+    if (!formData.email.trim())                   errs.email   = 'Email is required';
+    else if (!emailRe.test(formData.email.trim())) errs.email  = 'Enter a valid email';
+    if (!formData.message.trim())                 errs.message = 'Message cannot be empty';
+    else if (formData.message.trim().length < 10) errs.message = 'Too short — at least 10 characters';
+    return errs;
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear the error for this field as the user types
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, message } = formData;
-
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      toast.error('All inputs are required. Please fill out the form.');
+    const errs = validate();
+    if (Object.keys(errs).length) {
+      setErrors(errs);
       return;
     }
-
-    // Email regex validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      toast.error('Please enter a valid email address.');
-      return;
-    }
-
-    // Message length verification (min 10 characters)
-    if (message.trim().length < 10) {
-      toast.error('Message must be at least 10 characters long.');
-      return;
-    }
-
+    setErrors({});
     setLoading(true);
+    setBtnState('loading');
+    const { name, email, message } = formData;
 
     try {
       // Step 1: Save to Firebase Firestore (PRIMARY — must succeed)
@@ -65,17 +69,17 @@ export default function ContactSection() {
           }
         );
       } catch (emailErr) {
-        // EmailJS failed — log it but don't block success since Firestore save worked
         console.warn('EmailJS notification failed (message still saved to DB):', emailErr);
       }
 
-      // Show success — message is in the admin inbox regardless of email
+      setBtnState('success');
       toast.success('Message sent! Prince will get back to you soon. 🚀');
       setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setBtnState('idle'), 3000);
 
     } catch (error) {
-      // Only show error if Firebase save itself failed
       console.error('Contact form — Firestore save failed:', error);
+      setBtnState('idle');
       toast.error('Could not send message. Please email directly: princegajera944@gmail.com');
     } finally {
       setLoading(false);
@@ -182,66 +186,51 @@ export default function ContactSection() {
                 <div>
                   <label htmlFor="name" className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-gray-500 mb-2 select-none">Name</label>
                   <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
+                    type="text" id="name" name="name"
+                    value={formData.name} onChange={handleChange}
                     placeholder="Enter your name"
-                    className="admin-input font-sans text-xs sm:text-sm"
-                    disabled={loading}
-                    required
-                    aria-required="true"
+                    className={`admin-input font-sans text-xs sm:text-sm ${errors.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
+                    disabled={loading} aria-required="true"
                   />
+                  {errors.name && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.name}</p>}
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-gray-500 mb-2 select-none">Email Address</label>
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    type="email" id="email" name="email"
+                    value={formData.email} onChange={handleChange}
                     placeholder="name@example.com"
-                    className="admin-input font-sans text-xs sm:text-sm"
-                    disabled={loading}
-                    required
-                    aria-required="true"
+                    className={`admin-input font-sans text-xs sm:text-sm ${errors.email ? 'border-red-500/70 focus:border-red-500' : ''}`}
+                    disabled={loading} aria-required="true"
                   />
+                  {errors.email && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.email}</p>}
                 </div>
               </div>
 
               <div>
                 <label htmlFor="message" className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-gray-500 mb-2 select-none">Message</label>
                 <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows="4"
-                  placeholder="How can Prince help you?"
-                  className="admin-input font-sans text-xs sm:text-sm resize-none"
-                  disabled={loading}
-                  required
-                  aria-required="true"
+                  id="message" name="message"
+                  value={formData.message} onChange={handleChange}
+                  rows="4" placeholder="How can Prince help you?"
+                  className={`admin-input font-sans text-xs sm:text-sm resize-none ${errors.message ? 'border-red-500/70 focus:border-red-500' : ''}`}
+                  disabled={loading} aria-required="true"
                 />
+                {errors.message && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.message}</p>}
               </div>
 
               <button
                 type="submit"
-                className="w-full admin-btn uppercase font-mono tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 select-none"
-                disabled={loading}
+                className={`w-full admin-btn uppercase font-mono tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 select-none transition-all ${
+                  btnState === 'success' ? 'bg-green-600 hover:bg-green-600' : ''
+                }`}
+                disabled={loading || btnState === 'success'}
               >
-                {loading ? (
-                  <>
-                    <span className="w-4 h-4 rounded-full border border-white border-t-transparent animate-spin" />
-                    Transmitting...
-                  </>
-                ) : (
-                  <>
-                    🚀 Launch Message
-                  </>
+                {btnState === 'loading' && (
+                  <><span className="w-4 h-4 rounded-full border border-white border-t-transparent animate-spin" /> Transmitting...</>
                 )}
+                {btnState === 'success' && '✓ Message Sent!'}
+                {btnState === 'idle'    && '🚀 Launch Message'}
               </button>
             </form>
           </div>

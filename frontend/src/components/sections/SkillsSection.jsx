@@ -3,6 +3,7 @@ import ParticleBackground from '../ParticleBackground';
 import { getSkills } from '../../firebase/skills';
 import { useScrollReveal } from '../../hooks/useGSAP';
 import gsap from 'gsap';
+import AntiGravityField from '../AntiGravityField';
 
 export default function SkillsSection() {
   const [skills, setSkills] = useState([]);
@@ -93,7 +94,7 @@ export default function SkillsSection() {
         <div className="scroll-reveal-skills mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <p className="text-accent font-mono text-xs uppercase tracking-[0.25em] mb-2 select-none">&lt; Technologies /&gt;</p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white">Skills & Core Tech</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white">Skills &amp; Core Tech</h2>
           </div>
           
           {/* Category Tabs */}
@@ -121,70 +122,68 @@ export default function SkillsSection() {
             Compiling skillset...
           </div>
         ) : (
-          /* Pro-Level Glowing Cyber Grid */
-          <div className="skills-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredSkills.map((skill) => {
-              // Custom neon theme colors based on skill proficiency
-              const isExpert = skill.level >= 88;
-              const isAdvanced = skill.level >= 75;
-              
-              const themeColor = isExpert 
-                ? 'shadow-[0_0_15px_rgba(255,95,158,0.12)] border-accent/25 hover:border-accent/60' 
-                : isAdvanced 
-                  ? 'shadow-[0_0_15px_rgba(0,229,255,0.12)] border-secondary/25 hover:border-secondary/60' 
-                  : 'shadow-[0_0_15px_rgba(124,111,255,0.12)] border-primary/25 hover:border-primary/60';
-              
-              const textGlow = isExpert 
-                ? 'text-accent shadow-[0_0_8px_rgba(255,95,158,0.3)] bg-accent/5 border-accent/10' 
-                : isAdvanced 
-                  ? 'text-secondary shadow-[0_0_8px_rgba(0,229,255,0.3)] bg-secondary/5 border-secondary/10' 
-                  : 'text-primary shadow-[0_0_8px_rgba(124,111,255,0.3)] bg-primary/5 border-primary/10';
+          /* Anti-gravity enabled skills grid */
+          <div className="skills-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 relative">
+            <AntiGravityField>
+              {filteredSkills.map((skill) => {
+                const isExpert   = skill.level >= 88;
+                const isAdvanced = skill.level >= 75;
+                
+                const themeColor = isExpert 
+                  ? 'shadow-[0_0_15px_rgba(255,95,158,0.12)] border-accent/25 hover:border-accent/60' 
+                  : isAdvanced 
+                    ? 'shadow-[0_0_15px_rgba(0,229,255,0.12)] border-secondary/25 hover:border-secondary/60' 
+                    : 'shadow-[0_0_15px_rgba(124,111,255,0.12)] border-primary/25 hover:border-primary/60';
+                
+                const textGlow = isExpert 
+                  ? 'text-accent shadow-[0_0_8px_rgba(255,95,158,0.3)] bg-accent/5 border-accent/10' 
+                  : isAdvanced 
+                    ? 'text-secondary shadow-[0_0_8px_rgba(0,229,255,0.3)] bg-secondary/5 border-secondary/10' 
+                    : 'text-primary shadow-[0_0_8px_rgba(124,111,255,0.3)] bg-primary/5 border-primary/10';
 
-              const badgeText = isExpert 
-                ? 'EXPERT' 
-                : isAdvanced 
-                  ? 'ADVANCED' 
-                  : 'INTERMEDIATE';
+                const badgeText = isExpert ? 'EXPERT' : isAdvanced ? 'ADVANCED' : 'INTERMEDIATE';
 
-              return (
-                <div 
-                  key={skill.id}
-                  className={`skill-card bg-[#0d0d1a]/85 border backdrop-blur-md p-6 sm:p-7 rounded-2xl ${themeColor} transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between h-[130px] group`}
-                >
-                  <div className="flex justify-between items-start">
-                    <span className="text-white font-bold text-sm sm:text-base font-display flex items-center gap-2.5 select-none transition-colors duration-300 group-hover:text-white">
-                      <span className={`w-2 h-2 rounded-full ${
-                        isExpert ? 'bg-accent shadow-[0_0_8px_#FF5F9E]' : isAdvanced ? 'bg-secondary shadow-[0_0_8px_#00E5FF]' : 'bg-primary shadow-[0_0_8px_#7C6FFF]'
-                      }`} />
-                      {skill.name}
-                    </span>
-                    
-                    {/* Glowing Monospace Proficiency tag */}
-                    <span className={`px-2 py-0.5 rounded font-mono text-[9px] font-black border tracking-wider select-none ${textGlow}`}>
-                      {badgeText}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2 mt-4">
-                    <div className="flex justify-between items-center text-[10px] font-mono select-none">
-                      <span className="text-gray-500">POWER LEVEL</span>
-                      <span className={`font-bold ${isExpert ? 'text-accent' : isAdvanced ? 'text-secondary' : 'text-primary'}`}>{skill.level}%</span>
+                return (
+                  <div 
+                    key={skill.id}
+                    className={`skill-card bg-[#0d0d1a]/85 border backdrop-blur-md p-6 sm:p-7 rounded-2xl ${themeColor} transition-all duration-300 flex flex-col justify-between h-[130px] group`}
+                    style={{
+                      transition: 'border-color 0.3s, box-shadow 0.3s',
+                      transformStyle: 'preserve-3d',
+                      willChange: 'transform',
+                    }}
+                  >
+                    <div className="flex justify-between items-start">
+                      <span className="text-white font-bold text-sm sm:text-base font-display flex items-center gap-2.5 select-none">
+                        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                          isExpert ? 'bg-accent shadow-[0_0_8px_#FF5F9E]' : isAdvanced ? 'bg-secondary shadow-[0_0_8px_#00E5FF]' : 'bg-primary shadow-[0_0_8px_#7C6FFF]'
+                        }`} />
+                        {skill.name}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded font-mono text-[9px] font-black border tracking-wider select-none flex-shrink-0 ${textGlow}`}>
+                        {badgeText}
+                      </span>
                     </div>
-                    
-                    {/* Glowing Core progress gauge bar */}
-                    <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden relative border border-white/5">
-                      <div 
-                        className={`progress-fill h-full rounded-full transition-all duration-1000 ${
-                          isExpert ? 'bg-gradient-to-r from-accent to-pink-500 shadow-[0_0_10px_#FF5F9E]' : isAdvanced ? 'bg-gradient-to-r from-secondary to-blue-500 shadow-[0_0_10px_#00E5FF]' : 'bg-gradient-to-r from-primary to-indigo-500 shadow-[0_0_10px_#7C6FFF]'
-                        }`}
-                        data-level={skill.level}
-                        style={{ width: '0%' }}
-                      />
+
+                    <div className="space-y-2 mt-4">
+                      <div className="flex justify-between items-center text-[10px] font-mono select-none">
+                        <span className="text-gray-500">POWER LEVEL</span>
+                        <span className={`font-bold ${isExpert ? 'text-accent' : isAdvanced ? 'text-secondary' : 'text-primary'}`}>{skill.level}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden relative border border-white/5">
+                        <div 
+                          className={`progress-fill h-full rounded-full ${
+                            isExpert ? 'bg-gradient-to-r from-accent to-pink-500 shadow-[0_0_10px_#FF5F9E]' : isAdvanced ? 'bg-gradient-to-r from-secondary to-blue-500 shadow-[0_0_10px_#00E5FF]' : 'bg-gradient-to-r from-primary to-indigo-500 shadow-[0_0_10px_#7C6FFF]'
+                          }`}
+                          data-level={skill.level}
+                          style={{ width: '0%' }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </AntiGravityField>
           </div>
         )}
 

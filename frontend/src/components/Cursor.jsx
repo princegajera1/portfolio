@@ -1,50 +1,67 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-export default function Cursor() {
-  const cursorRef = useRef(null);
+const Cursor = () => {
+  const dotRef  = useRef(null);
+  const ringRef = useRef(null);
 
   useEffect(() => {
-    const cursor = cursorRef.current;
-    if (!cursor) return;
+    // Don't run on touch / small screens
+    if (window.matchMedia('(max-width: 767px)').matches) return;
+    if ('ontouchstart' in window) return;
 
-    // Set initial off-screen
-    gsap.set(cursor, { xPercent: -50, yPercent: -50, x: -100, y: -100 });
+    const dot  = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
 
-    const xTo = gsap.quickTo(cursor, "x", { duration: 0.3, ease: "power3.out" });
-    const yTo = gsap.quickTo(cursor, "y", { duration: 0.3, ease: "power3.out" });
+    // Start off-screen so they don't flash at 0,0
+    gsap.set([dot, ring], { x: -200, y: -200 });
 
-    const onMouseMove = (e) => {
-      xTo(e.clientX);
-      yTo(e.clientY);
+    // Dot follows almost instantly
+    const moveDotX  = gsap.quickTo(dot,  'x', { duration: 0.06, ease: 'none' });
+    const moveDotY  = gsap.quickTo(dot,  'y', { duration: 0.06, ease: 'none' });
+    // Ring lags — this gap is the premium feel
+    const moveRingX = gsap.quickTo(ring, 'x', { duration: 0.18, ease: 'power2.out' });
+    const moveRingY = gsap.quickTo(ring, 'y', { duration: 0.18, ease: 'power2.out' });
+
+    const onMove  = (e) => { moveDotX(e.clientX); moveDotY(e.clientY); moveRingX(e.clientX); moveRingY(e.clientY); };
+    const onEnter = ()  => ring.classList.add('is-hovering');
+    const onLeave = ()  => ring.classList.remove('is-hovering');
+    const onDown  = ()  => ring.classList.add('is-clicking');
+    const onUp    = ()  => ring.classList.remove('is-clicking');
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup',   onUp);
+
+    // Attach hover detection to all interactive elements (re-attach on DOM changes)
+    const attachHover = () => {
+      document.querySelectorAll('a, button, [role="button"], input, textarea, .card-tilt, .skill-card').forEach(el => {
+        el.addEventListener('mouseenter', onEnter);
+        el.addEventListener('mouseleave', onLeave);
+      });
     };
+    attachHover();
 
-    const onMouseOver = (e) => {
-      // Check if mouse is hovering over interactive elements
-      const target = e.target;
-      const isInteractive = 
-        target.closest('a') || 
-        target.closest('button') || 
-        target.closest('input') || 
-        target.closest('textarea') ||
-        target.closest('[role="button"]') ||
-        target.classList.contains('interactive-hover');
-        
-      if (isInteractive) {
-        cursor.classList.add('cursor-hover');
-      } else {
-        cursor.classList.remove('cursor-hover');
-      }
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseover', onMouseOver);
+    const observer = new MutationObserver(attachHover);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseover', onMouseOver);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mouseup',   onUp);
+      observer.disconnect();
     };
   }, []);
 
-  return <div ref={cursorRef} className="cursor-glow hidden md:block" />;
-}
+  return (
+    <>
+      {/* 6px white dot — instant */}
+      <div ref={dotRef}  className="cursor-dot"  aria-hidden="true" />
+      {/* 32px ring — lags, morphs on hover */}
+      <div ref={ringRef} className="cursor-ring" aria-hidden="true" />
+    </>
+  );
+};
+
+export default Cursor;
