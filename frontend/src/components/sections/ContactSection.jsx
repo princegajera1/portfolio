@@ -1,8 +1,14 @@
 import { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import ParticleBackground from '../ParticleBackground';
 import { saveMessage } from '../../firebase/messages';
 import { useScrollReveal } from '../../hooks/useGSAP';
 import { useToast } from '../../context/ToastContext';
+
+// EmailJS configuration - set these in your .env.local file
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -39,7 +45,30 @@ export default function ContactSection() {
     setLoading(true);
 
     try {
+      // 1. Save message to Firebase Firestore
       await saveMessage(name, email, message);
+
+      // 2. Send email notification to princegajera944@gmail.com via EmailJS
+      if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY) {
+        try {
+          await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            {
+              from_name: name,
+              from_email: email,
+              message: message,
+              to_email: 'princegajera944@gmail.com',
+              reply_to: email,
+            },
+            EMAILJS_PUBLIC_KEY
+          );
+        } catch (emailErr) {
+          // Email sending failed but message is already saved — log but don't block user
+          console.warn('EmailJS notification failed (message still saved):', emailErr);
+        }
+      }
+
       toast.success('Message sent successfully! Prince will reach out to you shortly.');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
