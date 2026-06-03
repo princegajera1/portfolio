@@ -142,7 +142,7 @@ export default function ContactSection() {
 
               {/* LinkedIn Card — full card clickable */}
               <a 
-                href="https://linkedin.com/in/GajeraPrince" 
+                href="https://www.linkedin.com/in/gajera-prince/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-accent/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
@@ -152,7 +152,7 @@ export default function ContactSection() {
                 </span>
                 <div>
                   <p className="text-[9px] text-gray-500 uppercase tracking-widest">LinkedIn Profile</p>
-                  <span className="group-hover:text-accent transition-colors">linkedin.com/in/GajeraPrince</span>
+                  <span className="group-hover:text-accent transition-colors">linkedin.com/in/gajera-prince</span>
                 </div>
               </a>
 

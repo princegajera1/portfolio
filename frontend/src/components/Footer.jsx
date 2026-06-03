@@ -62,7 +62,7 @@ export default function Footer() {
               </svg>
             </a>
             <a 
-              href="https://linkedin.com/in/prince-gajera-95bb38289" 
+              href="https://www.linkedin.com/in/gajera-prince/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center hover:border-secondary hover:text-white transition-all duration-300"
