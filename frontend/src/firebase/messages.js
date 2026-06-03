@@ -49,7 +49,7 @@ const getLocalMessages = () => {
 
 let localMessages = getLocalMessages();
 
-const isOfflineMode = () => !isFirebaseConfigured || !db || localStorage.getItem("mock_admin_logged") === "true";
+const isOfflineMode = () => !isFirebaseConfigured || !db;
 
 export const saveMessage = async (name, email, message) => {
   const msgData = {
@@ -60,16 +60,22 @@ export const saveMessage = async (name, email, message) => {
     read: false
   };
 
-  if (isOfflineMode()) {
-    const mockMsg = { id: `msg-${Date.now()}`, ...msgData };
-    localMessages.unshift(mockMsg);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMessages));
-    updateUnreadCount(localMessages);
-    return mockMsg;
+  // Always try Firebase first — mock_admin_logged only affects admin viewing, not message saving
+  if (!isOfflineMode()) {
+    try {
+      const docRef = await addDoc(collection(db, COLLECTION), msgData);
+      return { id: docRef.id, ...msgData };
+    } catch (err) {
+      console.error('Firebase save failed, falling back to local:', err);
+    }
   }
 
-  const docRef = await addDoc(collection(db, COLLECTION), msgData);
-  return { id: docRef.id, ...msgData };
+  // Fallback: save to localStorage if Firebase unavailable
+  const mockMsg = { id: `msg-${Date.now()}`, ...msgData };
+  localMessages.unshift(mockMsg);
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localMessages));
+  updateUnreadCount(localMessages);
+  return mockMsg;
 };
 
 export const getMessages = async () => {

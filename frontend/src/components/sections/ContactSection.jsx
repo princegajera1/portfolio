@@ -105,49 +105,65 @@ export default function ContactSection() {
 
             {/* Quick Cards Grid */}
             <div className="space-y-4 font-mono text-xs text-gray-400 select-none">
-              {/* Email Card */}
-              <div className="flex items-center gap-4 bg-surface-2/60 border border-white/5 p-4 rounded-xl">
-                <span className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-sm font-bold font-sans">
+              {/* Email Card — full card clickable */}
+              <a 
+                href="mailto:princegajera944@gmail.com" 
+                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-primary/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
+              >
+                <span className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 flex items-center justify-center text-primary text-sm font-bold font-sans transition-colors">
                   @
                 </span>
                 <div>
                   <p className="text-[9px] text-gray-500 uppercase tracking-widest">Email me directly</p>
-                  <a href="mailto:princegajera944@gmail.com" className="hover:text-primary transition-colors">princegajera944@gmail.com</a>
+                  <span className="group-hover:text-primary transition-colors">princegajera944@gmail.com</span>
                 </div>
-              </div>
+              </a>
 
-              {/* Phone Card */}
-              <div className="flex items-center gap-4 bg-surface-2/60 border border-white/5 p-4 rounded-xl">
-                <span className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary text-sm font-bold">
+              {/* Phone Card — full card clickable */}
+              <a 
+                href="tel:+919727031027" 
+                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-secondary/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
+              >
+                <span className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 group-hover:border-secondary/50 flex items-center justify-center text-secondary text-sm font-bold transition-colors">
                   📞
                 </span>
                 <div>
                   <p className="text-[9px] text-gray-500 uppercase tracking-widest">Call / WhatsApp</p>
-                  <a href="tel:+919727031027" className="hover:text-secondary transition-colors">+91 9727031027</a>
+                  <span className="group-hover:text-secondary transition-colors">+91 9727031027</span>
                 </div>
-              </div>
+              </a>
 
-              {/* LinkedIn Card */}
-              <div className="flex items-center gap-4 bg-surface-2/60 border border-white/5 p-4 rounded-xl">
-                <span className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-sm font-bold">
+              {/* LinkedIn Card — full card clickable */}
+              <a 
+                href="https://linkedin.com/in/GajeraPrince" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-accent/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
+              >
+                <span className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 group-hover:border-accent/50 flex items-center justify-center text-accent text-sm font-bold transition-colors">
                   💼
                 </span>
                 <div>
                   <p className="text-[9px] text-gray-500 uppercase tracking-widest">LinkedIn Profile</p>
-                  <a href="https://linkedin.com/in/GajeraPrince" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">linkedin.com/in/GajeraPrince</a>
+                  <span className="group-hover:text-accent transition-colors">linkedin.com/in/GajeraPrince</span>
                 </div>
-              </div>
+              </a>
 
-              {/* GitHub Card */}
-              <div className="flex items-center gap-4 bg-surface-2/60 border border-white/5 p-4 rounded-xl">
-                <span className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary text-sm font-bold">
+              {/* GitHub Card — full card clickable */}
+              <a 
+                href="https://github.com/princegajera1" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-secondary/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
+              >
+                <span className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 group-hover:border-secondary/50 flex items-center justify-center text-secondary text-sm font-bold transition-colors">
                   🔗
                 </span>
                 <div>
                   <p className="text-[9px] text-gray-500 uppercase tracking-widest">GitHub Repository</p>
-                  <a href="https://github.com/princegajera1" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">github.com/princegajera1</a>
+                  <span className="group-hover:text-secondary transition-colors">github.com/princegajera1</span>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
 

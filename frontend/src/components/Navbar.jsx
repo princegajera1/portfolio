@@ -204,37 +204,61 @@ export default function Navbar() {
         </div>
       </div>
 
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-[98] md:hidden bg-black/60 backdrop-blur-sm"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Mobile Menu Overlay Drawer */}
+      {/* Full-screen backdrop — fully opaque so no content bleeds through */}
       <div 
-        className={`fixed inset-y-0 right-0 w-[260px] z-[99] bg-dark border-l border-white/5 shadow-[-10px_0_40px_rgba(0,0,0,0.8)] flex flex-col transition-transform duration-350 ease-in-out md:hidden ${
+        className={`fixed inset-0 z-[98] md:hidden transition-opacity duration-200 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ background: 'rgba(4, 4, 12, 0.96)' }}
+        onClick={() => setIsOpen(false)}
+      />
+
+      {/* Mobile Menu Drawer — slides in from right */}
+      <div 
+        className={`fixed inset-y-0 right-0 z-[99] bg-[#080818] border-l border-[#00e5ff]/10 flex flex-col transition-transform duration-200 ease-out md:hidden relative ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
+        style={{ width: 'min(280px, 85vw)' }}
       >
-        <div className="flex flex-col h-full justify-between p-8 pt-24 font-mono select-none">
-          <ul className="flex flex-col gap-6 text-xs uppercase tracking-widest font-bold">
+        {/* Top accent line */}
+        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#00e5ff]/40 to-transparent" />
+
+        {/* Close button */}
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+          aria-label="Close menu"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </button>
+
+        <div className="flex flex-col h-full justify-between px-8 pb-8 pt-20 font-mono select-none overflow-y-auto">
+          {/* Nav links */}
+          <ul className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <li key={link.name}>
                 <a
                   href={link.isRoute ? `/${link.path}` : `#${link.path}`}
                   onClick={(e) => handleLinkClick(e, link)}
-                  className={`block py-2 ${
-                    isLinkActive(link) ? 'text-secondary font-black' : 'text-gray-400'
+                  className={`flex items-center gap-3 py-3.5 px-3 rounded-xl text-[11px] uppercase tracking-[0.22em] font-bold transition-all duration-150 ${
+                    isLinkActive(link) 
+                      ? 'text-[#00e5ff] bg-[#00e5ff]/8 border border-[#00e5ff]/20' 
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
+                  {isLinkActive(link) && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00e5ff] shadow-[0_0_6px_#00e5ff] shrink-0" />
+                  )}
                   {link.name}
                 </a>
               </li>
             ))}
           </ul>
 
-          <div className="flex flex-col gap-4 border-t border-white/5 pt-6">
+          {/* Bottom section */}
+          <div className="flex flex-col gap-4 border-t border-white/5 pt-6 mt-6">
             <a 
               href="/resume.pdf"
               target="_blank"
@@ -243,9 +267,9 @@ export default function Navbar() {
                 setIsOpen(false);
                 trackCTAClick('mobile_header_cv_download');
               }}
-              className="py-3 border border-[#7C6FFF]/30 text-center text-gray-300 text-xs font-bold tracking-widest rounded-xl hover:text-white hover:border-secondary transition-all"
+              className="py-3.5 bg-[#00e5ff]/8 border border-[#00e5ff]/25 hover:bg-[#00e5ff]/15 text-center text-[#00e5ff] text-[10px] font-bold tracking-[0.2em] rounded-xl transition-all duration-200 uppercase"
             >
-              DOWNLOAD CV
+              ⬇ Download CV
             </a>
             <p className="text-center text-[9px] text-gray-600">© 2026 PG — INDIA</p>
           </div>

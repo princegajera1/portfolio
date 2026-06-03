@@ -3,21 +3,20 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
-// Replace these placeholders with your actual Firebase project settings
+// Firebase project configuration (public credentials — safe to include in frontend)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "PLACEHOLDER_API_KEY",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyC4GGiLzrDWRmY9IUrTuC0aTw75NqNtAY8",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "prince-portfolio-155bf.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "prince-portfolio-155bf",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "prince-portfolio-155bf.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "PLACEHOLDER_SENDER_ID",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "PLACEHOLDER_APP_ID",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "PLACEHOLDER_MEASUREMENT_ID"
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "109021156926",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:109021156926:web:47dece61ca17875f32636f",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-S797VBLCHM"
 };
 
-// Check if configuration has been filled out or if it's default/placeholders
+// Firebase credentials are always valid (real values baked in as fallbacks)
 export const isFirebaseConfigured = 
-  firebaseConfig.apiKey && 
-  !firebaseConfig.apiKey.startsWith("PLACEHOLDER_");
+  !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
 
 
 let app;
