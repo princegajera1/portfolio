@@ -48,28 +48,35 @@ export default function ContactSection() {
     setLoading(true);
 
     try {
-      // 1. Save message to Firebase Firestore
+      // Step 1: Save to Firebase Firestore (PRIMARY — must succeed)
       await saveMessage(name, email, message);
 
-      // 2. Send email to princegajera944@gmail.com via EmailJS v4
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name:  name,
-          from_email: email,
-          message:    message,
-          to_email:   'princegajera944@gmail.com',
-          reply_to:   email,
-        }
-        // NOTE: publicKey already set via emailjs.init() above — do NOT pass it here in v4
-      );
+      // Step 2: Send email notification via EmailJS (SECONDARY — failure is silent)
+      try {
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          {
+            from_name:  name,
+            from_email: email,
+            message:    message,
+            to_email:   'princegajera944@gmail.com',
+            reply_to:   email,
+          }
+        );
+      } catch (emailErr) {
+        // EmailJS failed — log it but don't block success since Firestore save worked
+        console.warn('EmailJS notification failed (message still saved to DB):', emailErr);
+      }
 
-      toast.success('Message sent successfully! Prince will reach out to you shortly.');
+      // Show success — message is in the admin inbox regardless of email
+      toast.success('Message sent! Prince will get back to you soon. 🚀');
       setFormData({ name: '', email: '', message: '' });
+
     } catch (error) {
-      console.error('Contact form error:', error);
-      toast.error('Failed to deliver message. Please try again later.');
+      // Only show error if Firebase save itself failed
+      console.error('Contact form — Firestore save failed:', error);
+      toast.error('Could not send message. Please email directly: princegajera944@gmail.com');
     } finally {
       setLoading(false);
     }
