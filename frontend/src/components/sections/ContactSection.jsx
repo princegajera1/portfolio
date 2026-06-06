@@ -5,12 +5,10 @@ import { saveMessage } from '../../firebase/messages';
 import { useScrollReveal } from '../../hooks/useGSAP';
 import { useToast } from '../../context/ToastContext';
 
-// EmailJS v4 public configuration (safe to expose in frontend — public key only)
 const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  || 'service_o4lgkbh';
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_wcv25qp';
 const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  || 'Z3PL6-Urve7mMWMe6N';
 
-// Initialize EmailJS with public key (required for v4)
 emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
 export default function ContactSection() {
@@ -24,18 +22,16 @@ export default function ContactSection() {
   const validate = () => {
     const errs = {};
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.name.trim())                    errs.name    = 'Name is required';
-    if (!formData.email.trim())                   errs.email   = 'Email is required';
-    else if (!emailRe.test(formData.email.trim())) errs.email  = 'Enter a valid email';
-    if (!formData.message.trim())                 errs.message = 'Message cannot be empty';
-    else if (formData.message.trim().length < 10) errs.message = 'Too short — at least 10 characters';
+    if (!formData.name.trim()) errs.name = 'name required';
+    if (!formData.email.trim()) errs.email = 'email required';
+    else if (!emailRe.test(formData.email.trim())) errs.email = 'invalid email';
+    if (!formData.message.trim()) errs.message = 'message required';
     return errs;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear the error for this field as the user types
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
@@ -44,6 +40,7 @@ export default function ContactSection() {
     const errs = validate();
     if (Object.keys(errs).length) {
       setErrors(errs);
+      toast.error('Please fill in all the conversational blanks.');
       return;
     }
     setErrors({});
@@ -52,10 +49,7 @@ export default function ContactSection() {
     const { name, email, message } = formData;
 
     try {
-      // Step 1: Save to Firebase Firestore (PRIMARY — must succeed)
       await saveMessage(name, email, message);
-
-      // Step 2: Send email notification via EmailJS (SECONDARY — failure is silent)
       try {
         await emailjs.send(
           EMAILJS_SERVICE_ID,
@@ -69,171 +63,155 @@ export default function ContactSection() {
           }
         );
       } catch (emailErr) {
-        console.warn('EmailJS notification failed (message still saved to DB):', emailErr);
+        console.warn('EmailJS notification failed (saved to DB):', emailErr);
       }
 
       setBtnState('success');
-      toast.success('Message sent! Prince will get back to you soon. 🚀');
+      toast.success('Message sent! I will get back to you soon. 🚀');
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => setBtnState('idle'), 3000);
 
     } catch (error) {
-      console.error('Contact form — Firestore save failed:', error);
+      console.error('Contact submit failed:', error);
       setBtnState('idle');
-      toast.error('Could not send message. Please email directly: princegajera944@gmail.com');
+      toast.error('Error transmitting. Please email me directly instead!');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section id="contact" className="relative bg-dark overflow-hidden py-16 sm:py-20 px-6">
-      {/* Dynamic Purple background particle canvas */}
-      <ParticleBackground color="#6C63FF" density={100} />
+    <section id="contact" className="relative bg-dark overflow-hidden py-24 px-6">
+      <ParticleBackground color="#E8FF00" density={40} />
 
-      <div className="absolute bottom-1/3 right-10 w-96 h-96 bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/3 right-10 w-96 h-96 bg-primary/5 rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto relative z-10">
         
-        {/* Header */}
+        {/* Section Label */}
         <div className="scroll-reveal-contact mb-12 text-center md:text-left select-none">
-          <p className="text-secondary font-mono text-xs uppercase tracking-[0.25em] mb-2">&lt; Contact /&gt;</p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white">Let's Connect</h2>
+          <span className="section-label block mb-2">// 04. connect</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-white">Let's Talk</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           
-          {/* Contact Details & Links */}
-          <div className="scroll-reveal-contact md:col-span-5 space-y-8">
+          {/* Typographic "Let's Talk" Callout */}
+          <div className="scroll-reveal-contact lg:col-span-5 space-y-8">
             <div className="space-y-4">
-              <h3 className="text-white text-lg sm:text-xl md:text-2xl font-bold font-display leading-tight">
-                Have a project idea or internship opening?
+              {/* Availability Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] uppercase font-bold tracking-wider rounded-none">
+                <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
+                <span>Available for freelance</span>
+              </div>
+
+              <h3 className="text-white text-2xl sm:text-3xl md:text-4xl font-extrabold font-display leading-tight">
+                Have a project in mind?
               </h3>
-              <p className="text-gray-500 text-xs sm:text-sm leading-relaxed">
-                I am always open to discussing new web development projects, creative designs, full-stack architectures, or junior developer roles. Send a message!
+              <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+                Drop me a direct email or connect through my social links. I respond to all inquiries within 24 hours.
               </p>
             </div>
 
-            {/* Quick Cards Grid */}
-            <div className="space-y-4 font-mono text-xs text-gray-400 select-none">
-              {/* Email Card — full card clickable */}
+            {/* Large clickable email link */}
+            <div className="pt-4 select-text">
               <a 
                 href="mailto:princegajera944@gmail.com" 
-                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-primary/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
+                className="group inline-flex items-center gap-2 text-xl sm:text-2xl font-black font-display text-primary hover:text-white transition-colors duration-300 border-b border-primary/40 pb-1"
               >
-                <span className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 flex items-center justify-center text-primary text-sm font-bold font-sans transition-colors">
-                  @
-                </span>
-                <div>
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest">Email me directly</p>
-                  <span className="group-hover:text-primary transition-colors">princegajera944@gmail.com</span>
-                </div>
+                princegajera944@gmail.com
+                <span className="transform transition-transform group-hover:translate-x-1.5 font-sans">→</span>
               </a>
+            </div>
 
-              {/* Phone Card — full card clickable */}
-              <a 
-                href="tel:+919727031027" 
-                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-secondary/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
-              >
-                <span className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 group-hover:border-secondary/50 flex items-center justify-center text-secondary text-sm font-bold transition-colors">
-                  📞
-                </span>
-                <div>
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest">Call / WhatsApp</p>
-                  <span className="group-hover:text-secondary transition-colors">+91 9727031027</span>
-                </div>
-              </a>
-
-              {/* LinkedIn Card — full card clickable */}
-              <a 
-                href="https://www.linkedin.com/in/gajera-prince/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-accent/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
-              >
-                <span className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 group-hover:border-accent/50 flex items-center justify-center text-accent text-sm font-bold transition-colors">
-                  💼
-                </span>
-                <div>
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest">LinkedIn Profile</p>
-                  <span className="group-hover:text-accent transition-colors">linkedin.com/in/gajera-prince</span>
-                </div>
-              </a>
-
-              {/* GitHub Card — full card clickable */}
+            {/* Social Text links (No icons in a row) */}
+            <div className="flex flex-col gap-3 font-mono text-xs text-gray-400 pt-4 select-none">
               <a 
                 href="https://github.com/princegajera1" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="flex items-center gap-4 bg-surface-2/60 border border-white/5 hover:border-secondary/40 p-4 rounded-xl transition-all duration-200 hover:bg-surface-2/90 group cursor-pointer"
+                className="group inline-flex items-center gap-1.5 hover:text-white transition-colors w-max"
               >
-                <span className="w-8 h-8 rounded-lg bg-secondary/10 border border-secondary/20 group-hover:border-secondary/50 flex items-center justify-center text-secondary text-sm font-bold transition-colors">
-                  🔗
-                </span>
-                <div>
-                  <p className="text-[9px] text-gray-500 uppercase tracking-widest">GitHub Repository</p>
-                  <span className="group-hover:text-secondary transition-colors">github.com/princegajera1</span>
-                </div>
+                <span>[github.com/princegajera1]</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">↗</span>
+              </a>
+              <a 
+                href="https://www.linkedin.com/in/gajera-prince/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group inline-flex items-center gap-1.5 hover:text-white transition-colors w-max"
+              >
+                <span>[linkedin.com/in/gajera-prince]</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">↗</span>
               </a>
             </div>
           </div>
 
-          {/* Contact Form panel */}
-          <div className="scroll-reveal-contact md:col-span-7 bg-surface-2 border border-white/5 p-6 sm:p-8 rounded-2xl relative">
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="name" className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-gray-500 mb-2 select-none">Name</label>
+          {/* Conversational sentence-based form */}
+          <div className="scroll-reveal-contact lg:col-span-7 bg-[#111] border border-white/5 p-8 relative">
+            <form onSubmit={handleSubmit} className="space-y-8 font-sans">
+              
+              {/* Conversational input text block */}
+              <div className="text-base sm:text-lg md:text-xl text-gray-400 leading-loose select-text">
+                Hello Prince, my name is{' '}
+                <span className="inline-block relative">
                   <input
-                    type="text" id="name" name="name"
-                    value={formData.name} onChange={handleChange}
-                    placeholder="Enter your name"
-                    className={`admin-input font-sans text-xs sm:text-sm ${errors.name ? 'border-red-500/70 focus:border-red-500' : ''}`}
-                    disabled={loading} aria-required="true"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="your name"
+                    className={`bg-transparent border-b ${errors.name ? 'border-red-500 text-red-400' : 'border-white/20 focus:border-primary'} text-white placeholder-gray-600 focus:outline-none px-2 py-0.5 text-center font-bold tracking-tight w-40 sm:w-48`}
+                    disabled={loading}
                   />
-                  {errors.name && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.name}</p>}
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-gray-500 mb-2 select-none">Email Address</label>
+                </span>
+                . I am looking to collaborate on{' '}
+                <span className="inline-block relative">
                   <input
-                    type="email" id="email" name="email"
-                    value={formData.email} onChange={handleChange}
-                    placeholder="name@example.com"
-                    className={`admin-input font-sans text-xs sm:text-sm ${errors.email ? 'border-red-500/70 focus:border-red-500' : ''}`}
-                    disabled={loading} aria-required="true"
+                    type="text"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="a web project"
+                    className={`bg-transparent border-b ${errors.message ? 'border-red-500 text-red-400' : 'border-white/20 focus:border-primary'} text-white placeholder-gray-600 focus:outline-none px-2 py-0.5 text-center font-bold tracking-tight w-48 sm:w-64`}
+                    disabled={loading}
                   />
-                  {errors.email && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.email}</p>}
-                </div>
+                </span>
+                . You can reach me at{' '}
+                <span className="inline-block relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="your email address"
+                    className={`bg-transparent border-b ${errors.email ? 'border-red-500 text-red-400' : 'border-white/20 focus:border-primary'} text-white placeholder-gray-600 focus:outline-none px-2 py-0.5 text-center font-bold tracking-tight w-56 sm:w-72`}
+                    disabled={loading}
+                  />
+                </span>
+                .
               </div>
 
-              <div>
-                <label htmlFor="message" className="block text-[10px] sm:text-xs font-mono uppercase tracking-wider text-gray-500 mb-2 select-none">Message</label>
-                <textarea
-                  id="message" name="message"
-                  value={formData.message} onChange={handleChange}
-                  rows="4" placeholder="How can Prince help you?"
-                  className={`admin-input font-sans text-xs sm:text-sm resize-none ${errors.message ? 'border-red-500/70 focus:border-red-500' : ''}`}
-                  disabled={loading} aria-required="true"
-                />
-                {errors.message && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.message}</p>}
-              </div>
-
+              {/* Submit trigger button */}
               <button
                 type="submit"
-                className={`w-full admin-btn uppercase font-mono tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 select-none transition-all ${
-                  btnState === 'success' ? 'bg-green-600 hover:bg-green-600' : ''
+                className={`w-full py-4 text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 select-none ${
+                  btnState === 'success' 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-primary text-black hover:bg-white hover:shadow-[0_4px_20px_rgba(232,255,0,0.25)]'
                 }`}
                 disabled={loading || btnState === 'success'}
+                style={{ minHeight: '48px' }}
               >
                 {btnState === 'loading' && (
-                  <><span className="w-4 h-4 rounded-full border border-white border-t-transparent animate-spin" /> Transmitting...</>
+                  <><span className="w-4 h-4 rounded-full border border-black border-t-transparent animate-spin" /> Transmitting...</>
                 )}
-                {btnState === 'success' && '✓ Message Sent!'}
-                {btnState === 'idle'    && '🚀 Launch Message'}
+                {btnState === 'success' && '✓ Message Sent'}
+                {btnState === 'idle'    && 'Send Message →'}
               </button>
             </form>
           </div>
+
         </div>
       </div>
     </section>

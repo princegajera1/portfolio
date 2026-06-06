@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import ParticleBackground from '../ParticleBackground';
 import { useScrollReveal } from '../../hooks/useGSAP';
-import gsap from 'gsap';
 import { getExperience } from '../../firebase/experience';
 
 export default function AboutSection() {
@@ -18,24 +17,7 @@ export default function AboutSection() {
     return `${Math.floor(diffYears)}+ Yrs`;
   };
 
-
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.fact-card', 
-        { opacity: 0, scale: 0.95, y: 15 },
-        { 
-          opacity: 1, scale: 1, y: 0,
-          duration: 0.6, 
-          stagger: 0.08, 
-          ease: 'back.out(1.1)',
-          scrollTrigger: {
-            trigger: '.fact-grid',
-            start: 'top 85%'
-          }
-        }
-      );
-    });
-
     const fetchAndCalculateInternships = async () => {
       try {
         const data = await getExperience();
@@ -46,7 +28,6 @@ export default function AboutSection() {
           let totalMonths = 0;
           interns.forEach(e => {
             if (e.current || e.company.includes('Shreeji')) {
-              // Shreeji Software starting April 15, 2026
               const start = new Date('2026-04-15');
               const now = new Date();
               let diff = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
@@ -68,118 +49,127 @@ export default function AboutSection() {
       }
     };
     fetchAndCalculateInternships();
-
-    return () => ctx.revert();
   }, []);
 
-  const facts = [
-    { title: "Technical Architecture", text: "Obsessed with clean code directories, strict TypeScript typing, sub-second API roundtrips, and modular file systems." },
-    { title: "Visual Standards", text: "Striving for 100% responsiveness, harmonious color palettes, fluid visual timelines, and zero layout shifts (CLS)." },
-    { title: "Performance Metrics", text: "Actively auditing files, optimizing asset payloads, using tree-shaking, and achieving green 95+ scores on Lighthouse diagnostics." },
-    { title: "Engineering Mindset", text: "Turning developer pain points (like CORS bugs and complex async states) into robust reusable software components." }
+  const skillChips = [
+    { name: 'React.js', category: 'frontend' },
+    { name: 'JavaScript (ES6+)', category: 'frontend' },
+    { name: 'Vite', category: 'frontend' },
+    { name: 'Tailwind CSS', category: 'frontend' },
+    { name: 'GSAP Animations', category: 'frontend' },
+    { name: 'Java / Python', category: 'backend' },
+    { name: 'Node.js & Express', category: 'backend' },
+    { name: 'Firebase Serverless', category: 'backend' },
+    { name: 'REST APIs', category: 'backend' },
+    { name: 'Git & GitHub', category: 'tools' },
+    { name: 'SQL / Firestore', category: 'backend' }
   ];
 
   return (
-    <section id="about" className="relative bg-dark overflow-hidden pt-20 pb-10 px-6">
-      <ParticleBackground color="#00D4FF" density={90} />
+    <section id="about" className="relative bg-dark overflow-hidden pt-24 pb-20 px-6">
+      <ParticleBackground color="#E8FF00" density={50} />
       
-      <div className="absolute top-1/4 right-[10%] w-96 h-96 bg-secondary/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Off-grid asymmetric glow overlays */}
+      <div className="absolute top-[10%] right-[-5%] w-[450px] h-[450px] bg-primary/5 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="absolute bottom-[5%] left-[-10%] w-[350px] h-[350px] bg-primary/3 rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="max-w-5xl mx-auto relative z-10">
         
         {/* Section Header */}
-        <div className="scroll-reveal-about mb-12 text-center md:text-left select-none">
-          <span className="font-mono text-xs text-secondary block mb-2">// core.profile</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white pb-1">Professional Story</h2>
+        <div className="scroll-reveal-about mb-16 text-center md:text-left select-none">
+          <span className="section-label block mb-2">// 01. profile</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-white pb-1">Professional Story</h2>
         </div>
 
-        {/* Narrative & Graphic Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start mb-20">
+        {/* Narrative & Polaroid Layout — Off-grid intentional asymmetry */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-16">
           
-          {/* Interactive JSON Terminal Graphic */}
-          <div className="scroll-reveal-about md:col-span-4 flex justify-center">
-            <div className="relative w-64 h-64 sm:w-76 sm:h-76 group select-none">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary via-accent to-secondary animate-spin-slow opacity-20 blur-md" />
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-primary via-accent to-secondary animate-spin-slow opacity-30" />
-              
-              <div className="absolute inset-[1px] rounded-2xl bg-[#0d0d1a] overflow-hidden flex flex-col p-4 border border-white/5">
-                <div className="flex items-center gap-1.5 border-b border-white/5 pb-3 mb-4">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-                  <span className="text-[9px] text-gray-500 font-mono ml-2">prince.json</span>
-                </div>
-                <div className="flex-1 flex flex-col justify-center items-center text-left font-mono text-[9px] sm:text-[10px] leading-relaxed text-gray-400">
-                  <pre className="w-full">
-{`{
-  "name": "Prince Gajera",
-  "role": "Full Stack Engineer",
-  "degree": "B.E. Computer Engg",
-  "college": "SAL Institute (GTU)",
-  "location": "Ahmedabad, India",
-  "experience": "${getCodingExp()}",
-  "internships": ${internshipCount},
-  "status": "Ready for hire",
-  "authMethod": "Firebase Serverless",
-  "skills": ["React", "Java", "Python"]
-}`}
-                  </pre>
-                </div>
+          {/* Polaroid Style Photo Frame - Rotated 1.5deg */}
+          <div className="scroll-reveal-about md:col-span-5 flex justify-center md:justify-start order-2 md:order-1 z-10">
+            <div 
+              className="relative p-4 pb-12 bg-[#f4ebd0] text-[#1A1A1A] shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.03] select-none border border-white/10"
+              style={{
+                width: '280px',
+                transform: 'rotate(-2deg)',
+                fontFamily: 'var(--font-mono)'
+              }}
+            >
+              {/* Photo placeholder frame */}
+              <div className="relative w-full aspect-square bg-[#222] overflow-hidden border border-black/10">
+                <img 
+                  src="/robot.png" 
+                  alt="Prince Polaroid Frame Portrait"
+                  className="w-full h-full object-cover filter sepia brightness-95 contrast-125"
+                />
               </div>
+              
+              {/* Handwritten style caption */}
+              <div className="mt-4 text-center text-xs tracking-wide font-black uppercase text-[#1a1a1a]/70">
+                Prince Gajera // {new Date().getFullYear()}
+              </div>
+
+              {/* Tape visual effect */}
+              <div 
+                className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-white/20 backdrop-blur-[1px] rotate-[-5deg] border-x border-dashed border-black/5"
+                style={{ mixBlendMode: 'overlay' }}
+              />
             </div>
           </div>
 
-          {/* Recruiter Optimized Biography */}
-          <div className="scroll-reveal-about md:col-span-8 space-y-6 text-gray-400 text-xs sm:text-sm md:text-base leading-relaxed font-sans">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white font-display">
-              A computer engineering student combining deep database execution with absolute visual layout precision.
+          {/* Genuine Narrative Story — Asymmetrical offset layout */}
+          <div className="scroll-reveal-about md:col-span-7 space-y-6 text-gray-300 order-1 md:order-2 md:-ml-8 md:-translate-y-4">
+            <h3 className="text-xl sm:text-2xl font-black text-white font-display leading-tight">
+              A computer engineering student bridging modular databases and responsive layout visual logic.
             </h3>
             
-            <p>
-              I am **Gajera Prince Shaileshbhai**, a technical software engineer and developer intern located in Ahmedabad, Gujarat. Currently completing my third year of **B.E. in Computer Engineering (2023 - Present)** at SAL Engineering and Technical Institute, I spend my days writing clean code, building responsive interfaces, and resolving complex full-stack issues.
-            </p>
-            
-            <p>
-              My professional background highlights include building specialized billing databases (such as the enterprise tire inventory application for **Chandrakant Traders**), premium shopping platforms (**Ruiz Diamonds**), and advanced AI contextual chatbots. I leverage modern tools like React, Vite, and Google Firebase to construct secure, scalable serverless solutions.
-            </p>
+            <div className="space-y-4 text-sm sm:text-base leading-relaxed font-sans text-gray-400">
+              <p>
+                I started coding at 17 by breaking my high school's website trying to change my grades. Ever since that spark, I've been obsessed with how systems work under the hood. Today, I spend my time building modular React structures, designing database architectures, and engineering custom layouts that load in milliseconds.
+              </p>
+              
+              <p>
+                I am currently in my third year of <strong className="text-white font-semibold">B.E. in Computer Engineering</strong> at SAL Engineering and Technical Institute. Alongside my studies, I build commercial databases (like tire inventory platforms for Chandrakant Traders) and high-performance visual storefronts.
+              </p>
 
-            {/* Badges row */}
-            <div className="flex flex-wrap gap-2.5 pt-2 pb-4 select-none justify-center md:justify-start">
+              {/* The "Currently" Tracker */}
+              <div className="font-mono text-xs text-gray-300 border-l border-primary/40 pl-4 py-2 mt-4 select-text">
+                <span className="text-primary font-bold">Currently:</span> Diving deep into performance optimization, WebGL animations, and serverless edge functions.
+              </div>
+            </div>
+
+            {/* Micro badges row */}
+            <div className="flex flex-wrap gap-2 pt-2 select-none justify-center md:justify-start">
               {[
-                '🎓 B.E. Computer Engineering', 
-                `💼 ${internshipMonths} Months Internships`, 
-                '📍 Ahmedabad, Gujarat, India'
+                `🎓 SAL GTU Student`, 
+                `💼 ${internshipMonths} Months Experience`, 
+                `📍 Gujarat, India`
               ].map((badge, idx) => (
-                <span key={idx} className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-secondary/5 border border-secondary/15 text-secondary shadow-[0_0_10px_rgba(0,229,255,0.02)]">
+                <span key={idx} className="px-3 py-1.5 text-[10px] font-mono font-bold bg-[#111] border border-white/5 text-gray-300">
                   {badge}
                 </span>
               ))}
             </div>
-
-            <blockquote className="border-l-2 border-secondary pl-6 text-sm font-mono text-gray-300 italic py-2 my-6 select-text text-left">
-              "My mission is to engineer high-fidelity, high-performance web products that deliver real commercial business value. I write clean code, study sitemap indexing, and build products that load in milliseconds."
-            </blockquote>
           </div>
+
         </div>
 
-        {/* Fact Matrix */}
-        <div className="scroll-reveal-about mb-6 font-sans">
-          <p className="text-secondary font-mono text-xs uppercase tracking-[0.25em] mb-6 text-center md:text-left select-none">&lt; Engineering Standards & Principles /&gt;</p>
-          <div className="fact-grid grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {facts.map((fact, index) => (
-              <div 
-                key={index} 
-                className="fact-card bg-[#13132a]/30 border border-white/5 p-6 sm:p-8 rounded-2xl hover:border-[#7c6fff]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#7c6fff]/2 min-h-[140px] flex flex-col justify-center gap-2"
+        {/* Skill Chips Grid with subtle hover animations (No progress bars!) */}
+        <div className="scroll-reveal-about pt-8 border-t border-white/10">
+          <p className="section-label block mb-6 text-center md:text-left">// Core Toolkit</p>
+          
+          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+            {skillChips.map((chip, index) => (
+              <div
+                key={index}
+                className="px-4 py-2.5 bg-[#111] border border-white/5 text-gray-300 text-xs sm:text-sm font-mono transition-all duration-300 hover:border-primary hover:text-white hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(232,255,0,0.1)] select-none cursor-default"
               >
-                <h4 className="text-white font-display font-bold text-sm sm:text-base flex items-center gap-2.5 select-none">
-                  <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#00e5ff]" />
-                  {fact.title}
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed font-sans">{fact.text}</p>
+                <span className="text-primary mr-1.5">•</span>
+                {chip.name}
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </section>
   );
