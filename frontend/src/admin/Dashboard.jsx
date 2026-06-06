@@ -268,10 +268,42 @@ export default function Dashboard() {
           const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
           setUploadProgress(progress);
         }, 
-        (error) => {
-          console.error(error);
-          toast.error(`Upload failed: ${error.message}`);
-          setUploadProgress(null);
+        async (error) => {
+          console.warn("Storage upload failed, trying database fallback...", error);
+          
+          if (resumeFile.size > 800 * 1024) {
+            toast.error("File is too large for database fallback (max 800KB). Please compress the PDF.");
+            setUploadProgress(null);
+            return;
+          }
+
+          toast.info("Storage bucket write blocked. Auto-falling back to Database...");
+
+          try {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+              const base64Url = reader.result;
+              const metadata = {
+                url: base64Url,
+                filename: resumeFile.name,
+                uploadedAt: new Date().toISOString()
+              };
+              
+              // Save base64 directly to settings/resume doc in Firestore
+              await setDoc(doc(db, 'settings', 'resume'), metadata);
+              
+              localStorage.setItem('resume_url', base64Url);
+              setResumeData(metadata);
+              toast.success("Resume uploaded successfully to Database!");
+              setResumeFile(null);
+              setUploadProgress(null);
+            };
+            reader.readAsDataURL(resumeFile);
+          } catch (fallbackErr) {
+            console.error(fallbackErr);
+            toast.error(`Database fallback failed: ${fallbackErr.message}`);
+            setUploadProgress(null);
+          }
         }, 
         async () => {
           try {
@@ -282,7 +314,7 @@ export default function Dashboard() {
               uploadedAt: new Date().toISOString()
             };
             
-            // Save to Firestoresettings/resume
+            // Save to Firestore settings/resume
             await setDoc(doc(db, 'settings', 'resume'), metadata);
             
             localStorage.setItem('resume_url', downloadUrl);

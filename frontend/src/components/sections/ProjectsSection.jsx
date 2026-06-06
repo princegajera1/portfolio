@@ -128,117 +128,23 @@ export default function ProjectsSection() {
             Loading portfolio index...
           </div>
         ) : (
-          /* Asymmetric Bento-Grid Layout wrapper */
+          /* Uniform 3-Column Grid Layout: Shows exactly 3 projects side-by-side on desktop */
           <div className="projects-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {currentProjects.map((project, idx) => {
-              // Format project number
               const projectNumber = String(indexOfFirstProject + idx + 1).padStart(2, '0');
               const isFeatured = project.featured;
 
-              if (isFeatured) {
-                // Featured Project: Full width, horizontal visual bento block
-                return (
-                  <div 
-                    key={project.id}
-                    className="project-card col-span-1 md:col-span-2 lg:col-span-3 bg-[#111] border border-white/5 hover:border-primary/30 p-6 flex flex-col lg:flex-row gap-8 relative overflow-hidden group transition-all duration-500 min-h-[380px]"
-                  >
-                    {/* Large faded index number */}
-                    <div className="absolute top-4 right-8 text-7xl sm:text-8xl md:text-9xl font-black font-mono text-primary/5 select-none pointer-events-none">
-                      {projectNumber}
-                    </div>
-
-                    {/* Screenshot Mockup Container */}
-                    <div className="w-full lg:w-1/2 aspect-video lg:aspect-auto lg:h-full min-h-[200px] overflow-hidden bg-[#161616] border border-white/5 relative">
-                      <img 
-                        src={project.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80"} 
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale contrast-125 hover:grayscale-0"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-dark/60 via-transparent to-transparent z-10" />
-                      <span className="absolute top-4 left-4 z-20 bg-primary text-black font-mono text-[9px] uppercase font-bold tracking-widest px-3 py-1">
-                        Featured Work
-                      </span>
-                    </div>
-
-                    {/* Meta Detail block */}
-                    <div className="w-full lg:w-1/2 flex flex-col justify-between py-2">
-                      <div className="space-y-4">
-                        <h3 className="text-white text-xl sm:text-2xl font-black font-display group-hover:text-primary transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-xl">
-                          {project.description}
-                        </p>
-
-                        {project.libraries && (
-                          <div className="text-[10px] font-mono text-primary flex items-center gap-1.5 select-text">
-                            <span>📦 Libraries:</span>
-                            <span className="text-gray-300 bg-[#161616] px-2 py-0.5 border border-white/5 font-bold">
-                              {project.libraries}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Tech tags */}
-                        <div className="flex flex-wrap gap-1.5 select-none">
-                          {project.tech.map((tech, i) => (
-                            <span key={i} className="bg-white/5 border border-white/5 text-[9px] sm:text-[10px] text-gray-400 font-mono px-2 py-0.5">
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Launch Actions */}
-                      <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 border-t border-white/5 pt-6 font-mono text-xs select-none">
-                        <button 
-                          onClick={() => openCaseStudy(project)}
-                          className="w-full sm:w-auto px-5 py-2.5 bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-gray-300 hover:text-black font-bold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
-                        >
-                          <span>Case Study Details →</span>
-                        </button>
-
-                        <div className="flex items-center gap-4 w-full sm:w-auto justify-center sm:justify-start">
-                          {(project.githubUrl || project.github) && (
-                            <a 
-                              href={project.githubUrl || project.github} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-gray-400 hover:text-white transition-colors"
-                            >
-                              Codebase
-                            </a>
-                          )}
-                          {(project.liveUrl || project.live) && (
-                            <a 
-                              href={project.liveUrl || project.live} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline transition-all font-bold ml-auto"
-                            >
-                              Launch Product ↗
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              // Standard Project: Bento column block (varying layouts)
               return (
                 <div 
                   key={project.id}
-                  className="project-card col-span-1 bg-[#111] border border-white/5 hover:border-primary/30 p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 min-h-[380px]"
+                  className="project-card col-span-1 bg-[#111] border border-white/5 hover:border-primary/30 p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 min-h-[440px]"
                 >
-                  {/* Large faded index number */}
-                  <div className="absolute top-4 right-6 text-7xl font-black font-mono text-primary/5 select-none pointer-events-none">
+                  {/* Large faded index number overlay */}
+                  <div className="absolute top-4 right-6 text-7xl font-black font-mono text-primary/5 select-none pointer-events-none z-0">
                     {projectNumber}
                   </div>
 
-                  <div>
+                  <div className="relative z-10">
                     {/* Visual Cover Thumbnail */}
                     <div className="w-full aspect-video overflow-hidden bg-[#161616] border border-white/5 relative mb-6">
                       <img 
@@ -248,11 +154,19 @@ export default function ProjectsSection() {
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-dark/60 via-transparent to-transparent z-10" />
+                      
+                      {/* Featured Tag Badge Overlay */}
+                      {isFeatured && (
+                        <span className="absolute top-3 left-3 z-20 bg-primary text-black font-mono text-[9px] uppercase font-black tracking-widest px-2.5 py-1">
+                          Featured Work
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="text-white text-base sm:text-lg font-bold font-display group-hover:text-primary transition-colors duration-300 mb-2">
                       {project.title}
                     </h3>
+                    
                     <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-3">
                       {project.description}
                     </p>
@@ -267,7 +181,7 @@ export default function ProjectsSection() {
                     )}
                   </div>
 
-                  <div>
+                  <div className="relative z-10 mt-auto">
                     {/* Tech tag list */}
                     <div className="flex flex-wrap gap-1.5 mb-5 select-none">
                       {project.tech.map((tech, i) => (

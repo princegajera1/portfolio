@@ -6,6 +6,8 @@ import ParticleBackground from '../ParticleBackground';
 import { useHeroAnimation } from '../../hooks/useGSAP';
 import { getProjects } from '../../firebase/projects';
 import { useToast } from '../../context/ToastContext';
+import { db, isFirebaseConfigured } from '../../firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function HeroSection() {
   const navigate = useNavigate();
@@ -35,19 +37,6 @@ export default function HeroSection() {
   };
 
   useEffect(() => {
-    const savedResume = localStorage.getItem('resume_url');
-    if (savedResume) {
-      if (savedResume.startsWith('blob:')) {
-        localStorage.removeItem('resume_url');
-        localStorage.removeItem('prince_resume_metadata');
-        setResumeUrl('/resume.pdf');
-      } else {
-        setResumeUrl(savedResume);
-      }
-    } else {
-      setResumeUrl('/resume.pdf');
-    }
-
     const fetchCount = async () => {
       try {
         const list = await getProjects();
@@ -60,14 +49,38 @@ export default function HeroSection() {
     };
     fetchCount();
 
+    const fetchResume = async () => {
+      try {
+        const savedResume = localStorage.getItem('resume_url');
+        if (savedResume) {
+          if (savedResume.startsWith('blob:')) {
+            localStorage.removeItem('resume_url');
+            localStorage.removeItem('prince_resume_metadata');
+            setResumeUrl('/resume.pdf');
+          } else {
+            setResumeUrl(savedResume);
+          }
+        }
+        
+        if (isFirebaseConfigured && db) {
+          const docSnap = await getDoc(doc(db, 'settings', 'resume'));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data && data.url) {
+              setResumeUrl(data.url);
+              localStorage.setItem('resume_url', data.url);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching active resume PDF:", err);
+      }
+    };
+    fetchResume();
+
     const handleStorageChange = () => {
       fetchCount();
-      const savedResume = localStorage.getItem('resume_url');
-      if (savedResume) {
-        setResumeUrl(savedResume);
-      } else {
-        setResumeUrl('/resume.pdf');
-      }
+      fetchResume();
     };
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('projectsUpdated', handleStorageChange);
@@ -164,7 +177,7 @@ export default function HeroSection() {
             <a 
               href="#projects" 
               onClick={() => trackCTAClick('hero_explore_projects')}
-              className="px-8 py-4 bg-primary text-black rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-white hover:shadow-[0_0_30px_rgba(232,255,0,0.3)] hover:-translate-y-0.5 active:scale-95"
+              className="px-8 py-4 bg-primary text-black rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-white hover:shadow-[0_0_30px_rgba(232,255,0,0.3)] hover:-translate-y-0.5 active:scale-95 animate-glow"
             >
               Explore Portfolio
             </a>
@@ -181,7 +194,7 @@ export default function HeroSection() {
                   return;
                 }
               }}
-              className="px-8 py-4 border border-white/20 hover:border-primary text-white hover:text-primary rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-primary/5 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
+              className="px-8 py-4 border border-primary/20 hover:border-primary text-white hover:text-primary rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-primary/5 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
             >
               <span>Download CV</span>
             </a>
@@ -189,10 +202,9 @@ export default function HeroSection() {
             <a 
               href="#contact" 
               onClick={() => trackCTAClick('hero_schedule_call')}
-              className="group relative px-2 py-4 text-xs font-mono font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-colors duration-300"
+              className="px-8 py-4 border border-white/10 hover:border-white text-gray-400 hover:text-white rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-white/5 hover:-translate-y-0.5 active:scale-95"
             >
-              <span>Hire Me</span>
-              <span className="absolute bottom-3 left-0 w-full h-[1px] bg-white/20 group-hover:bg-primary transition-colors" />
+              Hire Me
             </a>
           </div>
 
@@ -215,38 +227,41 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right side Profile Photo Frame (Irregular clip path & tilt) */}
+        {/* Right side Profile Photo Frame (Irregular clip path & tilt - Fixed Corners) */}
         <div className="lg:col-span-5 flex justify-center lg:justify-end relative select-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-primary/5 rounded-full blur-[80px] pointer-events-none z-0" />
           
-          <div className="hero-profile-container relative z-10 w-64 sm:w-80 md:w-96 lg:w-full max-w-[340px] aspect-[4/5] p-2 bg-[#161616] border border-white/10">
-            {/* Irregular geometric clip-path framing */}
+          <div className="hero-profile-container relative z-10 w-64 sm:w-80 md:w-96 lg:w-full max-w-[340px] aspect-[4/5] bg-transparent">
+            {/* Irregular geometric clip-path framing wrapper */}
             <div 
-              className="relative w-full h-full bg-[#202020] overflow-hidden"
+              className="relative w-full h-full bg-[#111] overflow-hidden p-1.5"
               style={{
                 clipPath: 'polygon(6% 0%, 100% 8%, 94% 100%, 0% 92%)'
               }}
             >
-              <img 
-                src="/robot.png" 
-                alt="Prince Gajera Profile"
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 filter grayscale contrast-125 brightness-90 hover:grayscale-0"
-                loading="eager"
-              />
+              {/* Inner container to hold image and match the frame padding */}
+              <div className="relative w-full h-full bg-[#1c1c1c] overflow-hidden">
+                <img 
+                  src="/robot.png" 
+                  alt="Prince Gajera Profile"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 filter grayscale contrast-125 brightness-90 hover:grayscale-0"
+                  loading="eager"
+                />
 
-              {/* Hidden admin access eye trigger (perfectly mapped to the container) */}
-              <div
-                onClick={() => navigate('/admin/login')}
-                className="absolute cursor-pointer"
-                style={{
-                  top: '25%',
-                  left: '25%',
-                  width: '50%',
-                  height: '20%',
-                  zIndex: 40
-                }}
-                title="Secure System Gateway"
-              />
+                {/* Hidden admin access eye trigger (perfectly mapped to the container) */}
+                <div
+                  onClick={() => navigate('/admin/login')}
+                  className="absolute cursor-pointer animate-pulse"
+                  style={{
+                    top: '25%',
+                    left: '25%',
+                    width: '50%',
+                    height: '20%',
+                    zIndex: 40
+                  }}
+                  title="Secure System Gateway"
+                />
+              </div>
             </div>
             
             {/* Visual borders matching the clip-path */}
