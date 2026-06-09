@@ -1,174 +1,178 @@
-import { useEffect, useState } from 'react';
-import ParticleBackground from '../ParticleBackground';
-import { useScrollReveal } from '../../hooks/useGSAP';
-import { getExperience } from '../../firebase/experience';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FiArrowRight, FiBookOpen, FiCode, FiAward } from 'react-icons/fi';
+import Button from '../ui/Button';
+import Badge from '../ui/Badge';
+import Card from '../ui/Card';
 
 export default function AboutSection() {
-  useScrollReveal('.scroll-reveal-about');
-  const [internshipMonths, setInternshipMonths] = useState(2);
-  const [internshipCount, setInternshipCount] = useState(2);
+  const navigate = useNavigate();
 
-  // Dynamic Coding Experience Auto-calculation (Starts from September 2023)
-  const getCodingExp = () => {
-    const start = new Date('2023-09-01');
-    const now = new Date();
-    const diffTime = Math.abs(now - start);
-    const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
-    return `${Math.floor(diffYears)}+ Yrs`;
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.1 }
+    }
   };
 
-  useEffect(() => {
-    const fetchAndCalculateInternships = async () => {
-      try {
-        const data = await getExperience();
-        if (data && data.length) {
-          const interns = data.filter(e => e.role.toLowerCase().includes('intern'));
-          setInternshipCount(interns.length);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+    }
+  };
 
-          let totalMonths = 0;
-          interns.forEach(e => {
-            if (e.current || e.company.includes('Shreeji')) {
-              const start = new Date('2026-04-15');
-              const now = new Date();
-              let diff = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
-              if (now.getDate() < start.getDate()) {
-                diff--;
-              }
-              const ongoing = Math.max(1, diff);
-              totalMonths += ongoing;
-            } else if (e.company.includes('Prodigy')) {
-              totalMonths += 1;
-            } else {
-              totalMonths += 1;
-            }
-          });
-          setInternshipMonths(totalMonths);
-        }
-      } catch (e) {
-        console.error("Error fetching internships in AboutSection:", e);
-      }
-    };
-    fetchAndCalculateInternships();
-  }, []);
+  const statCards = [
+    { icon: FiBookOpen, title: '2+ Years', label: 'Learning Code', color: 'primary' },
+    { icon: FiCode, title: '19+ Built', label: 'Projects Shipped', color: 'secondary' },
+    { icon: FiAward, title: '16+ Stack', label: 'Technologies Used', color: 'primary' }
+  ];
 
-  const skillChips = [
-    { name: 'React.js', category: 'frontend' },
-    { name: 'JavaScript (ES6+)', category: 'frontend' },
-    { name: 'Vite', category: 'frontend' },
-    { name: 'Tailwind CSS', category: 'frontend' },
-    { name: 'GSAP Animations', category: 'frontend' },
-    { name: 'Java / Python', category: 'backend' },
-    { name: 'Node.js & Express', category: 'backend' },
-    { name: 'Firebase Serverless', category: 'backend' },
-    { name: 'REST APIs', category: 'backend' },
-    { name: 'Git & GitHub', category: 'tools' },
-    { name: 'SQL / Firestore', category: 'backend' }
+  const skillBadges = [
+    'React.js', 'Firebase', 'TypeScript', 'Tailwind CSS', 'Redux Toolkit', 'Framer Motion', 'Node.js', 'MongoDB'
   ];
 
   return (
-    <section id="about" className="relative bg-dark overflow-hidden pt-24 pb-20 px-6">
-      <ParticleBackground color="#E8FF00" density={50} />
-      
-      {/* Off-grid asymmetric glow overlays */}
-      <div className="absolute top-[10%] right-[-5%] w-[450px] h-[450px] bg-primary/5 rounded-full blur-[140px] pointer-events-none z-0" />
-      <div className="absolute bottom-[5%] left-[-10%] w-[350px] h-[350px] bg-primary/3 rounded-full blur-[120px] pointer-events-none z-0" />
-
-      <div className="max-w-5xl mx-auto relative z-10">
+    <section id="about" className="py-24 bg-bg-light dark:bg-bg-dark border-t border-border-light dark:border-border-dark overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 sm:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
         
-        {/* Section Header */}
-        <div className="scroll-reveal-about mb-16 text-center md:text-left select-none">
-          <span className="section-label block mb-2">// 01. profile</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-display text-white pb-1">Professional Story</h2>
-        </div>
+        {/* Left Column: Profile Photo + Floating stats cards */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-5 flex justify-center relative select-none"
+        >
+          {/* Main graphic container */}
+          <div className="relative w-64 sm:w-80 aspect-[4/5] bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl p-2 shadow-2xl">
+            <img
+              src="/avatar.png"
+              alt="Prince Gajera Timeline Profile"
+              className="w-full h-full object-cover rounded-xl filter grayscale hover:grayscale-0 transition-all duration-500 contrast-110 brightness-95"
+            />
+          </div>
 
-        {/* Narrative & Polaroid Layout — Off-grid intentional asymmetry */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-16">
-          
-          {/* Polaroid Style Photo Frame - Rotated 1.5deg */}
-          <div className="scroll-reveal-about md:col-span-5 flex justify-center md:justify-start order-2 md:order-1 z-10">
-            <div 
-              className="relative p-4 pb-12 bg-[#f4ebd0] text-[#1A1A1A] shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.03] select-none border border-white/10"
-              style={{
-                width: '280px',
-                transform: 'rotate(-2deg)',
-                fontFamily: 'var(--font-mono)'
-              }}
+          {/* Floating stat card 1: Top-Left */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, x: -20 }}
+            whileInView={{ opacity: 1, scale: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, type: 'spring' }}
+            className="absolute -top-6 -left-6 z-20"
+          >
+            <Card 
+              className="bg-white/70 dark:bg-[#111118]/70 border border-white/10 shadow-xl rounded-xl"
+              bodyClassName="p-3 !py-2.5 flex items-center gap-3"
             >
-              {/* Photo placeholder frame */}
-              <div className="relative w-full aspect-square bg-[#222] overflow-hidden border border-black/10">
-                <img 
-                  src="/robot.png" 
-                  alt="Prince Polaroid Frame Portrait"
-                  className="w-full h-full object-cover filter sepia brightness-95 contrast-125"
-                />
+              <div className="p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0">
+                <FiBookOpen className="w-4 h-4" />
               </div>
-              
-              {/* Handwritten style caption */}
-              <div className="mt-4 text-center text-xs tracking-wide font-black uppercase text-[#1a1a1a]/70">
-                Prince Gajera // {new Date().getFullYear()}
+              <div className="text-left leading-tight flex-shrink-0">
+                <div className="text-xs font-bold text-text-primary-light dark:text-text-primary-dark font-mono">2+ Years</div>
+                <div className="text-[9px] text-text-secondary-light dark:text-text-secondary-dark">Active Learning</div>
               </div>
+            </Card>
+          </motion.div>
 
-              {/* Tape visual effect */}
-              <div 
-                className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-white/20 backdrop-blur-[1px] rotate-[-5deg] border-x border-dashed border-black/5"
-                style={{ mixBlendMode: 'overlay' }}
-              />
-            </div>
-          </div>
-
-          {/* Genuine Narrative Story — Asymmetrical offset layout */}
-          <div className="scroll-reveal-about md:col-span-7 space-y-6 text-gray-300 order-1 md:order-2 md:-ml-8 md:-translate-y-4">
-            <h3 className="text-xl sm:text-2xl font-black text-white font-display leading-tight">
-              A computer engineering student bridging modular databases and responsive layout visual logic.
-            </h3>
-            
-            <div className="space-y-4 text-sm sm:text-base leading-relaxed font-sans text-gray-400">
-              <p>
-                I started coding at 17 by breaking my high school's website trying to change my grades. Ever since that spark, I've been obsessed with how systems work under the hood. Today, I spend my time building modular React structures, designing database architectures, and engineering custom layouts that load in milliseconds.
-              </p>
-              
-              <p>
-                I am currently in my third year of <strong className="text-white font-semibold">B.E. in Computer Engineering</strong> at SAL Engineering and Technical Institute. Alongside my studies, I build commercial databases (like tire inventory platforms for Chandrakant Traders) and high-performance visual storefronts.
-              </p>
-
-              {/* The "Currently" Tracker */}
-              <div className="font-mono text-xs text-gray-300 border-l border-primary/40 pl-4 py-2 mt-4 select-text">
-                <span className="text-primary font-bold">Currently:</span> Diving deep into performance optimization, WebGL animations, and serverless edge functions.
+          {/* Floating stat card 2: Bottom-Right */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, x: 20 }}
+            whileInView={{ opacity: 1, scale: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, type: 'spring' }}
+            className="absolute -bottom-6 -right-6 z-20"
+          >
+            <Card 
+              className="bg-white/70 dark:bg-[#111118]/70 border border-white/10 shadow-xl rounded-xl"
+              bodyClassName="p-3 !py-2.5 flex items-center gap-3"
+            >
+              <div className="p-2 rounded-lg bg-secondary/10 text-secondary flex-shrink-0">
+                <FiCode className="w-4 h-4" />
               </div>
-            </div>
-
-            {/* Micro badges row */}
-            <div className="flex flex-wrap gap-2 pt-2 select-none justify-center md:justify-start">
-              {[
-                `🎓 SAL GTU Student`, 
-                `💼 ${internshipMonths} Months Experience`, 
-                `📍 Gujarat, India`
-              ].map((badge, idx) => (
-                <span key={idx} className="px-3 py-1.5 text-[10px] font-mono font-bold bg-[#111] border border-white/5 text-gray-300">
-                  {badge}
-                </span>
-              ))}
-            </div>
-          </div>
-
-        </div>
-
-        {/* Skill Chips Grid with subtle hover animations (No progress bars!) */}
-        <div className="scroll-reveal-about pt-8 border-t border-white/10">
-          <p className="section-label block mb-6 text-center md:text-left">// Core Toolkit</p>
-          
-          <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-            {skillChips.map((chip, index) => (
-              <div
-                key={index}
-                className="px-4 py-2.5 bg-[#111] border border-white/5 text-gray-300 text-xs sm:text-sm font-mono transition-all duration-300 hover:border-primary hover:text-white hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(232,255,0,0.1)] select-none cursor-default"
-              >
-                <span className="text-primary mr-1.5">•</span>
-                {chip.name}
+              <div className="text-left leading-tight flex-shrink-0">
+                <div className="text-xs font-bold text-text-primary-light dark:text-text-primary-dark font-mono">19+ Built</div>
+                <div className="text-[9px] text-text-secondary-light dark:text-text-secondary-dark">Projects Shipped</div>
               </div>
+            </Card>
+          </motion.div>
+
+          {/* Floating stat card 3: Middle-Left */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, type: 'spring' }}
+            className="absolute top-1/2 -left-12 z-20"
+          >
+            <Card 
+              className="bg-white/70 dark:bg-[#111118]/70 border border-white/10 shadow-xl rounded-xl"
+              bodyClassName="p-3 !py-2.5 flex items-center gap-3"
+            >
+              <div className="p-2 rounded-lg bg-pink-500/10 text-pink-400 flex-shrink-0">
+                <FiAward className="w-4 h-4" />
+              </div>
+              <div className="text-left leading-tight flex-shrink-0">
+                <div className="text-xs font-bold text-text-primary-light dark:text-text-primary-dark font-mono">16+ Techs</div>
+                <div className="text-[9px] text-text-secondary-light dark:text-text-secondary-dark">In Stack</div>
+              </div>
+            </Card>
+          </motion.div>
+
+        </motion.div>
+
+        {/* Right Column: Bio Narrative */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          className="lg:col-span-7 space-y-6 text-left"
+        >
+          <motion.div variants={itemVariants} className="space-y-2">
+            <span className="section-label">// ABOUT ME</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary-light dark:text-text-primary-dark tracking-tight">
+              Passionate Developer on a Mission to Build Great Products
+            </h2>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="space-y-4 text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark leading-relaxed font-sans select-text">
+            <p>
+              My journey into frontend engineering started with a core curiosity for creating visual experiences. I enjoy translating complex UI/UX designs into pixel-perfect, interactive React interfaces.
+            </p>
+            <p>
+              I specialize in harnessing modern bundlers like Vite, building responsive layouts with Tailwind CSS, animating elements using Framer Motion, and integrating robust database logic via Firebase.
+            </p>
+            <p>
+              What drives me is building clean codebases that perform at scale, guaranteeing fast page loads, technical SEO visibility, and smooth micro-interactions that wow users.
+            </p>
+          </motion.div>
+
+          {/* Animated Tags Row */}
+          <motion.div variants={itemVariants} className="flex flex-wrap gap-2 pt-2">
+            {skillBadges.map((badge) => (
+              <Badge key={badge} variant="neutral" size="sm" className="font-semibold">
+                {badge}
+              </Badge>
             ))}
-          </div>
-        </div>
+          </motion.div>
+
+          {/* Read Full Story Button */}
+          <motion.div variants={itemVariants} className="pt-2">
+            <Button
+              variant="secondary"
+              onClick={() => navigate('/about')}
+              className="gap-2 group"
+            >
+              <span>Read Full Story</span>
+              <FiArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </motion.div>
+
+        </motion.div>
 
       </div>
     </section>

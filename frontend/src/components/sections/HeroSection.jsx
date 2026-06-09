@@ -1,278 +1,338 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import gsap from 'gsap';
-import Typed from 'typed.js';
-import ParticleBackground from '../ParticleBackground';
-import { useHeroAnimation } from '../../hooks/useGSAP';
-import { getProjects } from '../../firebase/projects';
-import { useToast } from '../../context/ToastContext';
-import { db, isFirebaseConfigured } from '../../firebase/config';
-import { doc, getDoc } from 'firebase/firestore';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { FiArrowRight, FiDownload, FiMail, FiGithub, FiLinkedin, FiTwitter, FiInstagram } from 'react-icons/fi';
+import { SiReact, SiFirebase, SiTypescript, SiTailwindcss } from 'react-icons/si';
+import { useLenis } from '../../context/LenisContext';
+import useGitHub from '../../hooks/useGitHub';
+import useSettings from '../../hooks/useSettings';
+import Button from '../ui/Button';
+import Badge from '../ui/Badge';
+import Spinner from '../ui/Spinner';
 
 export default function HeroSection() {
   const navigate = useNavigate();
-  const toast = useToast();
-  const typedRef = useRef(null);
-  const bgRef = useRef(null);
-  const [projectsCount, setProjectsCount] = useState(12);
-  const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
-  useHeroAnimation();
+  const { loading: githubLoading, stats } = useGitHub();
+  const { settings } = useSettings();
+  const { scrollY } = useLenis();
 
-  // Dynamic Coding Experience Auto-calculation (Starts from September 2023)
-  const getCodingExp = () => {
-    const start = new Date('2023-09-01');
-    const now = new Date();
-    const diffTime = Math.abs(now - start);
-    const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
-    return `${Math.floor(diffYears)}+ Years`;
+  // Scroll-linked parallax transforms
+  const orbY1 = useTransform(scrollY, [0, 600], [0, -80]);
+  const orbY2 = useTransform(scrollY, [0, 600], [0, -40]);
+  const avatarY = useTransform(scrollY, [0, 600], [0, 60]);
+  const textY = useTransform(scrollY, [0, 600], [0, 30]);
+  
+  // Mouse parallax spring values
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const springConfig = { damping: 25, stiffness: 150 };
+  const dx = useSpring(x, springConfig);
+  const dy = useSpring(y, springConfig);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left - width / 2;
+    const mouseY = e.clientY - rect.top - height / 2;
+    
+    // Map mouse movement to -20px to 20px
+    x.set((mouseX / width) * 40);
+    y.set((mouseY / height) * 40);
   };
 
-  const trackCTAClick = (label) => {
-    if (window.gtag) {
-      window.gtag('event', 'click_cta', {
-        'event_category': 'Engagement',
-        'event_label': label
-      });
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  const handleDownloadResume = () => {
+    const link = document.createElement('a');
+    link.href = settings?.resumeUrl || '/resume.pdf';
+    link.download = 'Prince_Gajera_Resume.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
     }
   };
 
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const list = await getProjects();
-        if (list && list.length) {
-          setProjectsCount(list.length);
-        }
-      } catch (e) {
-        console.error("Error fetching projects count in Hero:", e);
-      }
-    };
-    fetchCount();
-
-    const fetchResume = async () => {
-      try {
-        const savedResume = localStorage.getItem('resume_url');
-        if (savedResume) {
-          if (savedResume.startsWith('blob:')) {
-            localStorage.removeItem('resume_url');
-            localStorage.removeItem('prince_resume_metadata');
-            setResumeUrl('/resume.pdf');
-          } else {
-            setResumeUrl(savedResume);
-          }
-        }
-        
-        if (isFirebaseConfigured && db) {
-          const docSnap = await getDoc(doc(db, 'settings', 'resume'));
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            if (data && data.url) {
-              setResumeUrl(data.url);
-              localStorage.setItem('resume_url', data.url);
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching active resume PDF:", err);
-      }
-    };
-    fetchResume();
-
-    const handleStorageChange = () => {
-      fetchCount();
-      fetchResume();
-    };
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('projectsUpdated', handleStorageChange);
-
-    // Dynamic professional roles typing - Restricted to 1-2 phrases
-    const typed = new Typed(typedRef.current, {
-      strings: [
-        'Full Stack Developer',
-        'React Specialist'
-      ],
-      typeSpeed: 60,
-      backSpeed: 40,
-      loop: true,
-      backDelay: 3000,
-    });
-
-    const ctx = gsap.context(() => {
-      // Parallax ONLY on hero background elements
-      if (bgRef.current) {
-        gsap.to(bgRef.current, {
-          yPercent: 15,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '#home',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true
-          }
-        });
-      }
-
-      // Soft layout rotation adjustments
-      gsap.set('.hero-profile-container', { rotation: '-1.5deg' });
-      gsap.to('.hero-profile-container', {
-        y: '-10px',
-        rotation: '1.5deg',
-        duration: 5,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1
-      });
-    });
-
-    return () => {
-      typed.destroy();
-      ctx.revert();
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('projectsUpdated', handleStorageChange);
-    };
-  }, []);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 100 }
+    }
+  };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center bg-dark overflow-hidden pt-32 pb-16 lg:py-0">
-      {/* Background elements container (for parallax scroll effect) */}
-      <div ref={bgRef} className="absolute inset-0 pointer-events-none select-none">
-        <ParticleBackground color="#E8FF00" density={50} />
+    <section
+      id="home"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative min-h-screen flex items-center bg-bg-light dark:bg-bg-dark overflow-hidden pt-28 pb-16 lg:py-0 select-none"
+    >
+      {/* Background Layer: Grid and blurring gradient orbs */}
+      <div className="absolute inset-0 pointer-events-none z-0">
         
-        {/* Soft grid overlay */}
+        {/* CSS grid dot pattern fading from center */}
         <div 
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.15] dark:opacity-[0.08]"
           style={{
-            backgroundImage: 'radial-gradient(#E8FF00 1px, transparent 1px)',
-            backgroundSize: '32px 32px'
+            backgroundImage: 'radial-gradient(#6C63FF 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+            maskImage: 'radial-gradient(ellipse at center, black, transparent 70%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black, transparent 70%)'
           }}
         />
 
-        {/* Ambient glow backing */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-primary/5 rounded-full blur-[160px]" />
+        {/* 3 Large slowly oscillating blurred gradient orbs */}
+        <motion.div
+          style={{ y: orbY1 }}
+          animate={{
+            x: [0, 40, -20, 0],
+            y: [0, -30, 20, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-1/4 left-1/4 w-[35vw] h-[35vw] rounded-full bg-primary/10 blur-[120px] dark:bg-primary/5"
+        />
+        <motion.div
+          style={{ y: orbY2 }}
+          animate={{
+            x: [0, -30, 40, 0],
+            y: [0, 20, -40, 0],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] rounded-full bg-secondary/10 blur-[140px] dark:bg-secondary/5"
+        />
+        <motion.div
+          animate={{
+            x: [0, 20, -10, 0],
+            y: [0, 10, -20, 0],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] rounded-full bg-pink-500/5 blur-[120px]"
+        />
       </div>
 
       <div className="max-w-7xl w-full mx-auto px-6 sm:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
-        {/* Left narrative content */}
-        <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-          <div className="hero-tagline font-mono text-[10px] sm:text-xs text-primary tracking-[0.2em] uppercase mb-1 flex items-center gap-2 select-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#E8FF00]" />
-            &lt; Redefining Web Aesthetics /&gt;
-          </div>
-          
-          <h1 className="hero-name font-display text-4xl sm:text-6xl md:text-7.5xl font-black tracking-tight leading-[0.9] text-white">
-            Prince Gajera
-          </h1>
-          
-          <div className="hero-role text-base sm:text-lg md:text-xl font-mono text-gray-400 min-h-[30px] select-none">
-            Specialized as a <span ref={typedRef} className="text-primary font-bold" />
-          </div>
-          
-          <p className="hero-bio text-gray-400 max-w-xl text-xs sm:text-sm md:text-base leading-relaxed font-sans select-text">
-            I don't just write code — I engineer experiences. Balancing sub-second database execution with pixel-perfect visual engineering to build high-performance web products that scale seamlessly.
-          </p>
- 
-          {/* Action-centric CTA Buttons (Custom Styled) */}
-          <div className="hero-cta flex flex-wrap gap-4 justify-center lg:justify-start items-center select-none pt-4">
-            <a 
-              href="#projects" 
-              onClick={() => trackCTAClick('hero_explore_projects')}
-              className="px-8 py-4 bg-primary text-black rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-white hover:shadow-[0_0_30px_rgba(232,255,0,0.3)] hover:-translate-y-0.5 active:scale-95 animate-glow"
+        {/* Left Column: Headings & Narrative */}
+        <motion.div
+          style={{ y: textY }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6"
+        >
+          {/* Status Badge */}
+          {settings?.openToWork && (
+            <motion.div variants={itemVariants}>
+              <Badge variant="success" className="gap-2 px-3 py-1 text-[10px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10B981]" />
+                Open to Full-time &amp; Freelance Opportunities
+              </Badge>
+            </motion.div>
+          )}
+
+          {/* Headline Display */}
+          <motion.div variants={itemVariants} className="space-y-2">
+            <h1 className="text-4xl sm:text-6xl md:text-7.5xl font-extrabold tracking-tight leading-[0.95] text-text-primary-light dark:text-text-primary-dark">
+              Hi, I'm <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{settings?.name || 'Prince Gajera'}</span>
+            </h1>
+            <div className="font-display text-lg sm:text-2xl font-semibold text-text-secondary-light dark:text-text-secondary-dark mt-2">
+              Frontend Developer &amp; React Engineer
+            </div>
+          </motion.div>
+
+          {/* Subtitle */}
+          <motion.p 
+            variants={itemVariants} 
+            className="text-text-secondary-light dark:text-text-secondary-dark max-w-xl text-xs sm:text-sm md:text-base leading-relaxed font-sans"
+          >
+            {settings?.bio || "Building Modern, Fast, and Scalable Web Applications with React, Firebase, and cutting-edge frontend technologies."}
+          </motion.p>
+
+          {/* CTA Buttons Row */}
+          <motion.div 
+            variants={itemVariants} 
+            className="flex flex-wrap gap-4 justify-center lg:justify-start items-center pt-2 w-full"
+          >
+            <Button
+              variant="primary"
+              onClick={() => navigate('/projects')}
+              className="gap-2 group"
             >
-              Explore Portfolio
+              <span>View Projects</span>
+              <FiArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleDownloadResume}
+              className="gap-2"
+            >
+              <FiDownload className="w-4 h-4" />
+              <span>Resume</span>
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/contact')}
+              className="gap-2"
+            >
+              <FiMail className="w-4 h-4" />
+              <span>Contact</span>
+            </Button>
+          </motion.div>
+
+          {/* Social Proof Stats Bar */}
+          <motion.div
+            variants={itemVariants}
+            className="w-full max-w-lg border-t border-border-light dark:border-border-dark pt-6 mt-4 flex items-center justify-between font-mono"
+          >
+            {githubLoading ? (
+              <Spinner size="sm" />
+            ) : (
+              <>
+                <div className="flex-1 text-center lg:text-left">
+                  <div className="text-xl sm:text-2xl font-extrabold text-primary dark:text-text-primary-dark">
+                    {stats.reposCount || 19}+
+                  </div>
+                  <div className="text-[9px] uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mt-0.5">
+                    Repositories
+                  </div>
+                </div>
+                <div className="w-[1px] h-8 bg-border-light dark:bg-border-dark mx-4" />
+                <div className="flex-1 text-center">
+                  <div className="text-xl sm:text-2xl font-extrabold text-primary dark:text-text-primary-dark">
+                    {stats.totalStars || 5}+
+                  </div>
+                  <div className="text-[9px] uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mt-0.5">
+                    Total Stars
+                  </div>
+                </div>
+                <div className="w-[1px] h-8 bg-border-light dark:bg-border-dark mx-4" />
+                <div className="flex-1 text-center lg:text-right">
+                  <div className="text-xl sm:text-2xl font-extrabold text-primary dark:text-text-primary-dark">
+                    {stats.commitsCount || 260}+
+                  </div>
+                  <div className="text-[9px] uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mt-0.5">
+                    Commits
+                  </div>
+                </div>
+              </>
+            )}
+          </motion.div>
+
+          {/* Social Links Row */}
+          <motion.div variants={itemVariants} className="flex gap-4 pt-2">
+            <a href={settings?.socialLinks?.github || "https://github.com/princegajera1"} target="_blank" rel="noopener noreferrer" className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
+              <FiGithub className="w-5 h-5" />
             </a>
+            <a href={settings?.socialLinks?.linkedin || "https://www.linkedin.com/in/gajera-prince/"} target="_blank" rel="noopener noreferrer" className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
+              <FiLinkedin className="w-5 h-5" />
+            </a>
+            <a href={settings?.socialLinks?.twitter || "https://x.com/GajeraPrin20670"} target="_blank" rel="noopener noreferrer" className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
+              <FiTwitter className="w-5 h-5" />
+            </a>
+            <a href={settings?.socialLinks?.instagram || "https://www.instagram.com/gajera6902/"} target="_blank" rel="noopener noreferrer" className="text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors">
+              <FiInstagram className="w-5 h-5" />
+            </a>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Column: Premium Frame with Mouse Parallax and Orbiting Icons */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          style={{ x: dx, y: dy, translateY: avatarY }}
+          className="lg:col-span-5 flex justify-center lg:justify-end relative"
+        >
+          {/* Ambient Glow behind frame */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] rounded-full bg-gradient-to-tr from-primary/10 to-secondary/10 blur-[60px] pointer-events-none" />
+
+          <div className="relative w-64 sm:w-80 md:w-96 lg:w-full max-w-[340px] aspect-[4/5]">
             
-            <a 
-              href={resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                trackCTAClick('hero_cv_download');
-                if (resumeUrl === '#' || !resumeUrl) {
-                  e.preventDefault();
-                  toast.info("Preparing optimized CV PDF metadata... Please upload in the statistics tab.");
-                  return;
-                }
-              }}
-              className="px-8 py-4 border border-primary/20 hover:border-primary text-white hover:text-primary rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-primary/5 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
-            >
-              <span>Download CV</span>
-            </a>
-            
-            <a 
-              href="#contact" 
-              onClick={() => trackCTAClick('hero_schedule_call')}
-              className="px-8 py-4 border border-white/10 hover:border-white text-gray-400 hover:text-white rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-white/5 hover:-translate-y-0.5 active:scale-95"
-            >
-              Hire Me
-            </a>
-          </div>
+            {/* Outer Conic Rotating Border Frame */}
+            <div className="absolute inset-0 rounded-2xl p-[2.5px] bg-gradient-to-r from-primary via-secondary to-pink-500 animate-spin-slow shadow-2xl" />
 
-          {/* Recruiter specific analytics row (Dynamic & Specific Numbers) */}
-          <div className="hero-cta flex justify-between items-center w-full max-w-lg border-t border-white/10 pt-8 select-none text-center font-mono">
-            <div className="flex-1">
-              <div className="text-2xl sm:text-3xl font-black text-primary tracking-tight">{projectsCount}+</div>
-              <div className="text-[9px] text-gray-500 mt-1 uppercase tracking-widest">Projects Shipped</div>
-            </div>
-            <div className="w-[1px] h-8 bg-white/10 mx-4 flex-shrink-0" />
-            <div className="flex-1 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-primary tracking-tight">{getCodingExp()}</div>
-              <div className="text-[9px] text-gray-500 mt-1 uppercase tracking-widest">Active Coding</div>
-            </div>
-            <div className="w-[1px] h-8 bg-white/10 mx-4 flex-shrink-0" />
-            <div className="flex-1 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-primary tracking-tight">100%</div>
-              <div className="text-[9px] text-gray-500 mt-1 uppercase tracking-widest">Human Crafted</div>
-            </div>
-          </div>
-        </div>
+            {/* Inner Frame Container */}
+            <div className="absolute inset-[2.5px] bg-bg-light dark:bg-bg-dark rounded-[14px] overflow-hidden group">
+              <img
+                src={settings?.avatarUrl || "/avatar.png"}
+                alt="Prince Gajera Profile"
+                className="w-full h-full object-cover filter grayscale hover:grayscale-0 contrast-110 brightness-95 hover:scale-105 transition-all duration-700"
+              />
 
-        {/* Right side Profile Photo Frame (Irregular clip path & tilt - Fixed Corners) */}
-        <div className="lg:col-span-5 flex justify-center lg:justify-end relative select-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-primary/5 rounded-full blur-[80px] pointer-events-none z-0" />
-          
-          <div className="hero-profile-container relative z-10 w-64 sm:w-80 md:w-96 lg:w-full max-w-[340px] aspect-[4/5] bg-transparent">
-            {/* Irregular geometric clip-path framing wrapper */}
-            <div 
-              className="relative w-full h-full bg-[#111] overflow-hidden p-1.5"
-              style={{
-                clipPath: 'polygon(6% 0%, 100% 8%, 94% 100%, 0% 92%)'
-              }}
-            >
-              {/* Inner container to hold image and match the frame padding */}
-              <div className="relative w-full h-full bg-[#1c1c1c] overflow-hidden">
-                <img 
-                  src="/robot.png" 
-                  alt="Prince Gajera Profile"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 filter grayscale contrast-125 brightness-90 hover:grayscale-0"
-                  loading="eager"
-                />
+              {/* Secure Eye Trigger for Admin Login */}
+              <div 
+                onClick={() => navigate('/admin-login')}
+                className="absolute top-[20%] left-[25%] w-[50%] h-[15%] cursor-pointer z-20 opacity-0"
+                title="System Gateway"
+              />
 
-                {/* Hidden admin access eye trigger (perfectly mapped to the container) */}
-                <div
-                  onClick={() => navigate('/admin/login')}
-                  className="absolute cursor-pointer animate-pulse"
-                  style={{
-                    top: '25%',
-                    left: '25%',
-                    width: '50%',
-                    height: '20%',
-                    zIndex: 40
-                  }}
-                  title="Secure System Gateway"
-                />
+              {/* Bottom Glass Overlay Card */}
+              <div className="absolute bottom-4 inset-x-4 p-4 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md text-left z-10 flex flex-col gap-0.5">
+                <span className="font-display font-extrabold text-sm text-white">
+                  Prince Gajera
+                </span>
+                <span className="font-mono text-[9px] text-secondary font-bold uppercase tracking-wider">
+                  Frontend Specialist
+                </span>
               </div>
             </div>
-            
-            {/* Visual borders matching the clip-path */}
-            <div 
-              className="absolute inset-0 border border-primary/20 pointer-events-none z-30"
-              style={{
-                clipPath: 'polygon(6% 0%, 100% 8%, 94% 100%, 0% 92%)'
-              }}
-            />
+
+            {/* Orbiting / Floating Tech Badges */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute -top-4 -left-4 p-3 bg-bg-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-xl z-20"
+              title="React"
+            >
+              <SiReact className="w-5 h-5 text-sky-400 animate-spin-slow" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+              className="absolute -bottom-4 -right-4 p-3 bg-bg-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-xl z-20"
+              title="Firebase"
+            >
+              <SiFirebase className="w-5 h-5 text-amber-500" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+              className="absolute top-1/2 -right-6 p-3 bg-bg-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-xl z-20"
+              title="TypeScript"
+            >
+              <SiTypescript className="w-5 h-5 text-blue-500" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+              className="absolute bottom-1/3 -left-6 p-3 bg-bg-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-xl z-20"
+              title="Tailwind CSS"
+            >
+              <SiTailwindcss className="w-5 h-5 text-teal-400" />
+            </motion.div>
+
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>

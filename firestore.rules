@@ -25,5 +25,9 @@ service cloud.firestore {
     match /analytics/{document} {
       allow read, write: if true;
     }
+    
+    match /bookings/{document} {
+      allow read, write: if true;
+    }
   }
 }

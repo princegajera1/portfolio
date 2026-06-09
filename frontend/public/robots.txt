@@ -1,11 +1,3 @@
 User-agent: *
 Allow: /
-Allow: /about
-Allow: /skills
-Allow: /projects
-Allow: /experience
-Allow: /contact
-Disallow: /admin/
-Disallow: /admin/*
-
 Sitemap: https://princegajera.vercel.app/sitemap.xml

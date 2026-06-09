@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import ParticleBackground from '../ParticleBackground';
 import { getExperience } from '../../firebase/experience';
 import { useScrollReveal } from '../../hooks/useGSAP';
 import gsap from 'gsap';
@@ -68,11 +67,10 @@ export default function ExperienceSection() {
   }, [loading]);
 
   return (
-    <section id="experience" className="relative bg-dark overflow-hidden py-16 sm:py-20 px-6">
-      {/* Dynamic Cyan Particle background galaxy */}
-      <ParticleBackground color="#00D4FF" density={90} />
-
-      <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[140px] pointer-events-none" />
+    <section id="experience" className="relative bg-bg-dark border-t border-border-dark overflow-hidden py-16 sm:py-20 px-6">
+      
+      {/* Premium background glowing orb */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-secondary/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
         
@@ -90,10 +88,10 @@ export default function ExperienceSection() {
           </div>
         ) : (
           /* Timeline core */
-          <div className="timeline-container relative border-l border-white/10 ml-4 md:ml-0 md:mx-auto md:border-l-0 md:flex md:flex-col md:items-center">
+          <div className="timeline-container relative border-l border-[#E8FF00]/20 ml-4 md:ml-0 md:mx-auto md:border-l-0 md:flex md:flex-col md:items-center">
             
             {/* Center connecting line for large viewports */}
-            <div className="hidden md:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-primary via-secondary to-accent" />
+            <div className="hidden md:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-[#E8FF00] via-primary to-secondary" />
 
             {experiences.map((exp, index) => {
               const isEven = index % 2 === 0;
@@ -107,11 +105,11 @@ export default function ExperienceSection() {
                 >
                   
                   {/* Glowing Tree bullet node */}
-                  <div className="timeline-node absolute left-[-21px] top-6 md:left-1/2 md:-translate-x-1/2 md:top-6 w-10 h-10 rounded-xl bg-surface-2 border border-white/10 flex items-center justify-center z-20 transition-all duration-300 hover:border-primary">
+                  <div className="timeline-node absolute left-[-21px] top-6 md:left-1/2 md:-translate-x-1/2 md:top-6 w-10 h-10 rounded-xl bg-surface-2 border border-white/10 flex items-center justify-center z-20 transition-all duration-300 hover:border-[#E8FF00]">
                     <span className={`w-2 h-2 rounded-full ${
                       exp.current 
-                        ? 'bg-secondary animate-pulse shadow-[0_0_8px_#00D4FF]' 
-                        : 'bg-primary'
+                        ? 'bg-[#E8FF00] animate-pulse shadow-[0_0_12px_#E8FF00]' 
+                        : 'bg-[#E8FF00] shadow-[0_0_8px_#E8FF00]'
                     }`} />
                   </div>
 
@@ -181,111 +179,7 @@ export default function ExperienceSection() {
           </div>
         )}
 
-        {/* Education Subsection */}
-        <div className="scroll-reveal-exp mt-24 mb-20">
-          <div className="text-center mb-12 select-none">
-            <p className="text-secondary font-mono text-xs uppercase tracking-[0.25em] mb-2">&lt; Academics /&gt;</p>
-            <h2 className="text-2xl sm:text-3xl font-bold font-display text-white">Education</h2>
-          </div>
 
-          <div className="space-y-6">
-            {/* Ongoing B.E. Degree Card - Premium Full Width */}
-            <div className="bg-surface-2 border border-white/5 p-6 sm:p-8 rounded-2xl relative hover:border-primary/30 transition-all duration-300 shadow-[0_0_20px_rgba(108,99,255,0.03)] flex flex-col md:flex-row justify-between gap-6">
-              <div className="space-y-4 max-w-2xl text-left">
-                <div className="flex justify-between items-start flex-wrap gap-2 select-none">
-                  <span className="text-[10px] font-mono text-primary font-bold uppercase tracking-wider block">2023 – Present</span>
-                  <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-primary/10 text-primary border border-primary/20 shadow-[0_0_8px_rgba(108,99,255,0.15)]">
-                    ONGOING
-                  </span>
-                </div>
-                <h3 className="text-white text-lg sm:text-xl font-bold font-display leading-tight">
-                  B.E. in Computer Engineering
-                </h3>
-                <h4 className="text-secondary font-semibold text-xs sm:text-sm font-sans select-none">
-                  SAL Engineering and Technical Institute (Affiliated to GTU)
-                </h4>
-                <p className="text-gray-500 text-xs sm:text-sm leading-relaxed">
-                  Currently pursuing B.E. in Computer Engineering. Developing core foundational software engineering expertise across algorithmic logic, object-oriented concepts, relational database schemas, and clean repository structures.
-                </p>
-              </div>
-              
-              <div className="flex flex-wrap md:flex-col gap-2 justify-start items-start md:items-end select-none min-w-[150px]">
-                <p className="text-[9px] font-mono text-gray-500 uppercase tracking-widest block md:text-right w-full mb-1">Core curriculum</p>
-                {["Computer Engineering", "C++", "Java", "Python", "SQL", "Git"].map((tech, idx) => (
-                  <span 
-                    key={idx} 
-                    className="bg-white/5 text-[9px] sm:text-[10px] text-gray-400 font-mono px-2.5 py-1 rounded border border-white/5"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Twin Grid for HSC & SSC */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* HSC Card */}
-              <div className="bg-surface-2 border border-white/5 p-6 rounded-2xl relative hover:border-secondary/30 transition-all duration-300">
-                <span className="text-[10px] font-mono text-primary font-bold uppercase tracking-wider block mb-2">2021 – 2023</span>
-                <h3 className="text-white text-base sm:text-lg font-bold font-display mb-1">HSC (Science)</h3>
-                <h4 className="text-secondary font-semibold text-xs sm:text-sm mb-4 font-sans">Amreli, Gujarat</h4>
-                <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-4">
-                  Completed higher secondary education in the science stream with a strong focus on mathematics, physics, and computer science.
-                </p>
-                <div className="font-mono text-xs text-accent font-semibold flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  Score: 66.46%
-                </div>
-              </div>
-
-              {/* SSC Card */}
-              <div className="bg-surface-2 border border-white/5 p-6 rounded-2xl relative hover:border-secondary/30 transition-all duration-300">
-                <span className="text-[10px] font-mono text-primary font-bold uppercase tracking-wider block mb-2">2019 – 2021</span>
-                <h3 className="text-white text-base sm:text-lg font-bold font-display mb-1">SSC</h3>
-                <h4 className="text-secondary font-semibold text-xs sm:text-sm mb-4 font-sans">Amreli, Gujarat</h4>
-                <p className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-4">
-                  Completed secondary school certificate curriculum with excellent grades in mathematics and science.
-                </p>
-                <div className="font-mono text-xs text-accent font-semibold flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  Score: 69.95%
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Certifications Grid */}
-        <div className="scroll-reveal-exp mt-20">
-          <div className="text-center mb-12 select-none">
-            <p className="text-secondary font-mono text-xs uppercase tracking-[0.25em] mb-2">&lt; Credentials /&gt;</p>
-            <h2 className="text-2xl sm:text-3xl font-bold font-display text-white">Certifications</h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { title: "Python 101 for Data Science", provider: "IBM Cognitive Class", tech: "Python / Data Science" },
-              { title: "Communication Skills", provider: "TCS iON", tech: "Soft Skills" },
-              { title: "Interview Skills", provider: "TCS iON", tech: "Professional Skills" },
-              { title: "Generative AI Internship", provider: "Prodigy InfoTech", tech: "AI / Machine Learning" },
-              { title: "Business Etiquette", provider: "TCS iON", tech: "Corporate Culture" },
-              { title: "Cyber Security Awareness", provider: "ISEA, Government of India", tech: "Cyber Security" }
-            ].map((cert, idx) => (
-              <div 
-                key={idx} 
-                className="bg-surface border border-white/5 p-5 rounded-xl hover:border-primary/40 hover:shadow-[0_0_15px_rgba(108,99,255,0.03)] transition-all duration-300 flex flex-col justify-between"
-              >
-                <div className="space-y-2">
-                  <span className="text-[9px] font-mono text-primary uppercase tracking-wider block font-semibold">{cert.provider}</span>
-                  <h3 className="text-white text-xs sm:text-sm font-bold font-display leading-snug">{cert.title}</h3>
-                </div>
-                <div className="mt-4 pt-3 border-t border-white/5 font-mono text-[9px] text-gray-500">
-                  {cert.tech}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
       </div>
     </section>

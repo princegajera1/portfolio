@@ -10,7 +10,7 @@ export const initialExperienceSeed = [
   {
     id: "exp-1",
     company: "Shreeji Software (Gota, Ahmedabad)",
-    role: "Software Development Intern",
+    role: "Frontend Developer",
     duration: "April 15, 2026 – Present",
     description: "Developing robust, modern web architectures utilizing React 18, Tailwind CSS, and Firebase. Specializing in commercial tyre management ledgers (-CHANDRAKANT-TRADERS) and custom full-stack solutions, focusing on performance, state sync, and sub-second querying speeds.",
     technologies: ["React", "Firebase", "Tailwind CSS", "JavaScript", "REST APIs"],
@@ -20,7 +20,7 @@ export const initialExperienceSeed = [
   {
     id: "exp-2",
     company: "Prodigy InfoTech",
-    role: "Generative AI Intern",
+    role: "Generative AI Developer",
     duration: "July 01, 2025 – July 31, 2025",
     description: "Built advanced generative AI prototypes, automated conversational chatbots, and exploratory data pipelines. Gained hands-on experience in machine learning APIs, local text generation engines, and structured full-stack Python helpers.",
     technologies: ["Python", "Generative AI", "APIs", "Data Science", "Machine Learning"],
