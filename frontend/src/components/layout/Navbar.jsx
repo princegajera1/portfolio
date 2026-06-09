@@ -72,15 +72,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="text-xl font-extrabold font-display tracking-tight flex items-center gap-2 group select-none">
             <div className="w-8 h-8 rounded-lg bg-[#111118]/80 border border-primary/20 flex items-center justify-center shadow-lg group-hover:border-primary/50 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-5.5 h-5.5">
-                <defs>
-                  <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#6C63FF" />
-                    <stop offset="100%" stopColor="#E8FF00" />
-                  </linearGradient>
-                </defs>
-                <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" fontFamily="sans-serif" fontWeight="900" fontSize="52" fill="url(#navGrad)" letterSpacing="-3">PG</text>
-              </svg>
+              <img src="/pg_logo.png" alt="PG Logo" className="w-5.5 h-5.5 object-contain" />
             </div>
             <span className="bg-gradient-to-r from-primary to-[#E8FF00] bg-clip-text text-transparent font-black text-xl">
               Prince
